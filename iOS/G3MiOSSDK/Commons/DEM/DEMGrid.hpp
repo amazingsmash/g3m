@@ -45,6 +45,8 @@ public:
 
   virtual double getElevation(int x, int y) const = 0;
   
+  Geodetic2D getInnerPoint(int x, int y) const;
+  
 };
 
 #endif

@@ -55,6 +55,8 @@ public:
   virtual const Angle getInnerPointLatitude(const Sector& sector,
                                             double v) const = 0;
   
+  Geodetic2D getInnerPoint(const Sector& sector, double u, double v);
+  
 };
 
 #endif

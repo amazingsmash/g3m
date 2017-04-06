@@ -47,3 +47,9 @@ void Projection::getUV(const Geodetic2D& position,
   result.set(getU(position._longitude),
              getV(position._latitude));
 }
+
+Geodetic2D Projection::getInnerPoint(const Sector& sector, double u, double v){
+  const Angle lat = getInnerPointLatitude(sector, v);
+  const Angle lon = getInnerPointLongitude(sector, u);
+  return Geodetic2D(lat, lon);
+}

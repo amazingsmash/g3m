@@ -82,8 +82,8 @@ const Angle WebMercatorProjection::getInnerPointLongitude(const Sector& sector,
 
 const Angle WebMercatorProjection::getInnerPointLatitude(const Sector& sector,
                                                          double v) const {
-  const double lowerV = getU(sector._lower._latitude);
-  const double upperV = getU(sector._upper._latitude);
+  const double lowerV = getV(sector._lower._latitude);
+  const double upperV = getV(sector._upper._latitude);
   const double sV = lowerV + ((upperV - lowerV) * v);
 
   return getInnerPointLatitude(sV);

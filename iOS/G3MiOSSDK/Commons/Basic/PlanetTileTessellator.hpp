@@ -84,7 +84,21 @@ private:
                                float verticalExaggeration,
                                FloatBufferBuilderFromGeodetic* vertices,
                                TileTessellatorMeshData& tileTessellatorMeshData) const;
+  
+  double createSurfaceVerticesFromDEMGrid(const DEMGrid* grid, //At this point DEMGrid must have proper sector and res.
+                               float verticalExaggeration,
+                               FloatBufferBuilderFromGeodetic* vertices,
+                               TileTessellatorMeshData& tileTessellatorMeshData) const;
 
+  double createSurface(const Sector& tileSector,
+                       const DEMGrid* demGrid,
+                       float verticalExaggeration,
+                       bool mercator,
+                       FloatBufferBuilderFromGeodetic* vertices,
+                       ShortBufferBuilder& indices,
+                       FloatBufferBuilderFromCartesian2D& textCoords,
+                       TileTessellatorMeshData& tileTessellatorMeshData) const;
+  
   double createSurface(const Sector& tileSector,
                        const Sector& meshSector,
                        const Vector2S& meshResolution,

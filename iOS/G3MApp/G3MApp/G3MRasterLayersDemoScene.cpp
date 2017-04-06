@@ -23,6 +23,8 @@
 #include <G3MiOSSDK/Geodetic3D.hpp>
 #include <G3MiOSSDK/PlanetRenderer.hpp>
 
+#include <G3MiOSSDK/MapzenDEMProvider.hpp>
+
 
 void G3MRasterLayersDemoScene::createLayerSet(LayerSet* layerSet) {
   MapBoxLayer* mboxOSMLayer = new MapBoxLayer("examples.map-cnkhv76j",
@@ -195,9 +197,15 @@ void G3MRasterLayersDemoScene::rawActivate(const G3MContext* context) {
 
   createLayerSet( getModel()->getLayerSet() );
   
-  getModel()->getG3MWidget()->setCameraPosition(Geodetic3D::fromDegrees(27.05392035893508762, -15.534032544664327702, 26904));
-  getModel()->getG3MWidget()->setCameraHeadingPitchRoll(Angle::zero(), Angle::fromDegrees(-13), Angle::zero());
+//  getModel()->getG3MWidget()->setCameraPosition(Geodetic3D::fromDegrees(27.05392035893508762, -15.534032544664327702, 26904));
+//  getModel()->getG3MWidget()->setCameraHeadingPitchRoll(Angle::zero(), Angle::fromDegrees(-13), Angle::zero());
   
+  
+  planetRenderer->setDEMProvider( new MapzenDEMProvider("mapzen-ZB6FqMg",
+                                                        DownloadPriority::HIGHER,
+                                                        TimeInterval::fromDays(0),
+                                                        false, /* readExpired */
+                                                        0      /* deltaHeight */) );
 }
 
 void G3MRasterLayersDemoScene::rawSelectOption(const std::string& option,

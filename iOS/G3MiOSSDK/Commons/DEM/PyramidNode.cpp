@@ -84,6 +84,9 @@ bool PyramidNode::insertGrid(int z,
   else if (z == _z) {
     if ((x == _x) && (y == _y)) {
       _grid = grid;
+#warning AT WORK
+      //Avisar a tus subscribers y a sus hijos
+      
 //      _stickyGrid = stickyGrid;
       return true;
     }
@@ -151,6 +154,8 @@ void PyramidNode::removeSubscription(DEMSubscription* subscription) {
     if (_subscriptions->empty()) {
       delete _subscriptions;
       _subscriptions = NULL;
+#warning AT WORK
+       //meter aqui: avisar al padre para que te borre si tu y tus hermanos están vacios _sticky??
     }
   }
 

@@ -7,6 +7,8 @@
 //
 
 #include "DEMGrid.hpp"
+#include "Projection.hpp"
+#include "ILogger.hpp"
 
 
 DEMGrid::DEMGrid(const Sector&   sector,
@@ -34,4 +36,26 @@ const Vector2I DEMGrid::getExtent() const {
 
 const Geodetic2D DEMGrid::getResolution() const {
   return _resolution;
+}
+
+Geodetic2D DEMGrid::getInnerPoint(int x, int y) const{
+  
+  const int mrx = getExtent()._x;
+  const int mry = getExtent()._y;
+  
+  const double v = (double) y / (mry - 1);
+  const double u = (double) x / (mrx - 1);
+  
+  Sector s = getSector();
+  
+#warning Lats come with wrong sign???
+  const Angle lat = getProjection()->getInnerPointLatitude(s, v);
+  const Angle lon = getProjection()->getInnerPointLongitude(s, u);
+  
+#warning REMOVE TEST
+  if (getSector().shrinkedByPercent(-0.02f).contains(lat, lon)){
+    ILogger::instance()->logError("Logic Error " + getSector().description() + " P: " + Geodetic2D(lat, lon).description());
+  }
+  
+  return Geodetic2D(lat, lon);
 }
