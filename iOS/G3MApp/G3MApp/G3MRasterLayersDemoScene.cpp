@@ -201,11 +201,11 @@ void G3MRasterLayersDemoScene::rawActivate(const G3MContext* context) {
 //  getModel()->getG3MWidget()->setCameraHeadingPitchRoll(Angle::zero(), Angle::fromDegrees(-13), Angle::zero());
   
   
-//  planetRenderer->setDEMProvider( new MapzenDEMProvider("mapzen-ZB6FqMg",
-//                                                        DownloadPriority::HIGHER,
-//                                                        TimeInterval::fromDays(0),
-//                                                        false, /* readExpired */
-//                                                        0      /* deltaHeight */) );
+  planetRenderer->setDEMProvider( new MapzenDEMProvider("mapzen-ZB6FqMg",
+                                                        DownloadPriority::HIGHER,
+                                                        TimeInterval::fromDays(0),
+                                                        false, /* readExpired */
+                                                        0      /* deltaHeight */) );
 }
 
 void G3MRasterLayersDemoScene::rawSelectOption(const std::string& option,

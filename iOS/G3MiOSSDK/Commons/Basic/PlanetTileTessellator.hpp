@@ -19,6 +19,7 @@ class Sector;
 class FloatBufferBuilderFromGeodetic;
 class ShortBufferBuilder;
 class Vector2S;
+class Projection;
 
 class PlanetTileTessellatorData {
 public:
@@ -154,7 +155,7 @@ private:
                                        const Sector& meshSector,
                                        FloatBufferBuilderFromCartesian2D& textCoords) const;
   
-  void createSurfaceTextureCoordinatesForDEMGrid(bool mercator,
+  void createSurfaceTextureCoordinatesForDEMGrid(Projection* textureProjection,
                                        const Vector2S& meshResolution,
                                        const Sector& tileSector,
                                        const Sector& meshSector,

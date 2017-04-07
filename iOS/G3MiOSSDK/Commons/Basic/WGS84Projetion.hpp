@@ -11,6 +11,7 @@
 
 #include "Projection.hpp"
 
+#warning rename class missing C
 class WGS84Projetion : public Projection {
 private:
   static WGS84Projetion* INSTANCE;

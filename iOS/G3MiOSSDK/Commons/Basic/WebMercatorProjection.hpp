@@ -11,6 +11,8 @@
 
 #include "Projection.hpp"
 
+#warning ask Diego: shouldn't this be called just Mercator Proj?
+
 class WebMercatorProjection : public Projection {
 private:
   static WebMercatorProjection* INSTANCE;

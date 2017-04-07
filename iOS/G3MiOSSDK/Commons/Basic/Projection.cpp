@@ -11,7 +11,7 @@
 #include "Vector2D.hpp"
 #include "MutableVector2D.hpp"
 #include "Geodetic2D.hpp"
-
+#include "Sector.hpp"
 
 Projection::Projection() {
 
@@ -48,8 +48,47 @@ void Projection::getUV(const Geodetic2D& position,
              getV(position._latitude));
 }
 
-Geodetic2D Projection::getInnerPoint(const Sector& sector, double u, double v){
+Geodetic2D Projection::getInnerPoint(const Sector& sector, double u, double v) const{
   const Angle lat = getInnerPointLatitude(sector, v);
   const Angle lon = getInnerPointLongitude(sector, u);
   return Geodetic2D(lat, lon);
+}
+
+Vector2D Projection::getUV(const Sector& sector, const Geodetic2D& p) const{
+  
+  const double lowerV = getV(sector._lower._latitude);
+  const double upperV = getV(sector._upper._latitude);
+  const double deltaV = upperV - lowerV;
+  
+  const double globalV = getV(p._latitude);
+  const double v = (upperV - globalV) / deltaV;
+  
+  
+  const double lowerU = getU(sector._lower._longitude);
+  const double upperU = getU(sector._upper._longitude);
+  const double deltaU = upperU - lowerU;
+  
+  const double globalU = getU(p._longitude);
+  const double u = (globalU - lowerU) / deltaU;
+  
+  return Vector2D(u,v);
+  
+  
+  
+//  const double mercatorLowerGlobalV = MercatorUtils::getMercatorV(tileSector._lower._latitude);
+//  const double mercatorUpperGlobalV = MercatorUtils::getMercatorV(tileSector._upper._latitude);
+//  const double mercatorDeltaGlobalV = mercatorLowerGlobalV - mercatorUpperGlobalV;
+//  for (int i = 0; i < verticesArray.size(); i++){
+//    
+//    p->getU
+//    
+//    //U
+//    const double m_u = tileSector.getUCoordinate(verticesArray[i]->_longitude);
+//    
+//    //V
+//    const double mercatorGlobalV = MercatorUtils::getMercatorV(verticesArray[i]->_latitude);
+//    const double m_v = (mercatorGlobalV - mercatorUpperGlobalV) / mercatorDeltaGlobalV;
+//    
+//    textCoords.add((float)m_u, (float)m_v);
+  
 }

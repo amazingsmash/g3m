@@ -38,6 +38,8 @@
 #include "Vector2D.hpp"
 #include "DEMGrid.hpp"
 #include "Projection.hpp"
+#include "WebMercatorProjection.hpp"
+#include "WGS84Projetion.hpp"
 
 
 PlanetTileTessellator::PlanetTileTessellator(const bool skirted, const Sector& sector):
@@ -467,78 +469,17 @@ double PlanetTileTessellator::createSurfaceVertices(const Vector2S& meshResoluti
   return minElevation;
 }
 
-void PlanetTileTessellator::createSurfaceTextureCoordinatesForDEMGrid(bool mercator,
+void PlanetTileTessellator::createSurfaceTextureCoordinatesForDEMGrid(Projection* textureProjection,
                                                                       const Vector2S& meshResolution,
                                                                       const Sector& tileSector,
                                                                       const Sector& meshSector,
                                                                       FloatBufferBuilderFromCartesian2D& textCoords,
                                                                       const std::vector<Geodetic2D*>& verticesArray) const{
-  
-  if (mercator){
-    const double mercatorLowerGlobalV = MercatorUtils::getMercatorV(tileSector._lower._latitude);
-    const double mercatorUpperGlobalV = MercatorUtils::getMercatorV(tileSector._upper._latitude);
-    const double mercatorDeltaGlobalV = mercatorLowerGlobalV - mercatorUpperGlobalV;
+
     for (int i = 0; i < verticesArray.size(); i++){
-      //U
-      const double m_u = tileSector.getUCoordinate(verticesArray[i]->_longitude);
-      
-      //V
-      const double mercatorGlobalV = MercatorUtils::getMercatorV(verticesArray[i]->_latitude);
-      const double m_v = (mercatorGlobalV - mercatorUpperGlobalV) / mercatorDeltaGlobalV;
-      
-      textCoords.add((float)m_u, (float)m_v);
+      Vector2D tc = textureProjection->getUV(tileSector, *verticesArray[i]);
+      textCoords.add(tc);
     }
-  } else{
-#warning TODO
-  }
-  
-  
-  //  if (mercator) {
-  //    const double mercatorLowerGlobalV = MercatorUtils::getMercatorV(tileSector._lower._latitude);
-  //    const double mercatorUpperGlobalV = MercatorUtils::getMercatorV(tileSector._upper._latitude);
-  //    const double mercatorDeltaGlobalV = mercatorLowerGlobalV - mercatorUpperGlobalV;
-  //
-  //    for (int j = 0; j < meshResolution._y; j++) {
-  //      const double v = (double) j / (meshResolution._y - 1);
-  //
-  //      for (int i = 0; i < meshResolution._x; i++) {
-  //        const double u = (double) i / (meshResolution._x - 1);
-  //
-  //        const Angle lat = Angle::linearInterpolation( meshSector._lower._latitude,  meshSector._upper._latitude,  1.0 - v );
-  //        const Angle lon = Angle::linearInterpolation( meshSector._lower._longitude, meshSector._upper._longitude,       u );
-  //
-  //
-  //
-  //        //U
-  //        const double m_u = tileSector.getUCoordinate(lon);
-  //
-  //        //V
-  //        const double mercatorGlobalV = MercatorUtils::getMercatorV(lat);
-  //        const double m_v = (mercatorGlobalV - mercatorUpperGlobalV) / mercatorDeltaGlobalV;
-  //
-  //        //        if (madrid){
-  //        //          printf("%f %f\n", m_v, m_u);
-  //        //        }
-  //
-  //        sum = sum + m_v;
-  //        //printf("%f\n", m_v);
-  //        textCoords.add((float)m_u, (float)m_v);
-  //      }
-  //    }
-  //
-  //  }
-  //  else {
-  //    for (int j = 0; j < meshResolution._y; j++) {
-  //      const double v = (double) j / (meshResolution._y - 1);
-  //      for (int i = 0; i < meshResolution._x; i++) {
-  //        const double u = (double) i / (meshResolution._x - 1);
-  //        textCoords.add((float)u, (float)v);
-  //      }
-  //    }
-  //  }
-  //
-  //  printf("%s -> %f\n", meshSector.description().c_str(),  sum );
-  
 }
 
 void PlanetTileTessellator::createSurfaceTextureCoordinates(bool mercator,
@@ -622,7 +563,17 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
   Sector meshSector = demGrid->getSector();
   Vector2S meshResolution = Vector2S((short)demGrid->getExtent()._x, (short)demGrid->getExtent()._y);
   
-  createSurfaceTextureCoordinatesForDEMGrid(mercator,
+#warning turn this into parameter
+  Projection* textureProjection;
+  if (mercator){
+    textureProjection = WebMercatorProjection::instance();
+  } else{
+#warning TODO TEST
+    textureProjection = WGS84Projetion::instance();
+  }
+  
+  
+  createSurfaceTextureCoordinatesForDEMGrid(textureProjection,
                                             meshResolution,
                                             tileSector,
                                             meshSector,
