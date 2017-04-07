@@ -102,24 +102,24 @@ Mesh* PlanetTileTessellator::createTileMesh(const G3MRenderContext* rc,
                                             const ElevationData* elevationData,
                                             const DEMGrid* grid,
                                             TileTessellatorMeshData& tileTessellatorMeshData) const {
-  /*
-   if (grid != NULL) {
-   const Vector3D minMaxAverageElevations = DEMGridUtils::getMinMaxAverageElevations(grid);
-   tileTessellatorMeshData._minHeight     = minMaxAverageElevations._x;
-   tileTessellatorMeshData._maxHeight     = minMaxAverageElevations._y;
-   // tileTessellatorMeshData._averageHeight = minMaxAverageElevations._z;
-   tileTessellatorMeshData._averageHeight = 0;
-   
-   return DEMGridUtils::createDebugMesh(grid,
-   rc->getPlanet(),
-   prc->_verticalExaggeration,
-   Geodetic3D::zero(), // offset
-   -11000,             // minElevation
-   9000,               // maxElevation
-   15                  // pointSize
-   );
-   }
-   */
+#warning UNCOMMENT FOR GRID CLOUD
+  if (grid != NULL) {
+    const Vector3D minMaxAverageElevations = DEMGridUtils::getMinMaxAverageElevations(grid);
+    tileTessellatorMeshData._minHeight     = minMaxAverageElevations._x;
+    tileTessellatorMeshData._maxHeight     = minMaxAverageElevations._y;
+    // tileTessellatorMeshData._averageHeight = minMaxAverageElevations._z;
+    tileTessellatorMeshData._averageHeight = 0;
+    
+    return DEMGridUtils::createDebugMesh(grid,
+                                         rc->getPlanet(),
+                                         prc->_verticalExaggeration,
+                                         Geodetic3D::zero(), // offset
+                                         -11000,             // minElevation
+                                         9000,               // maxElevation
+                                         15                  // pointSize
+                                         );
+  }
+  
   
   const Sector tileSector = tile->_sector;
   const Sector meshSector = getRenderedSectorForTile(tile);
@@ -264,6 +264,7 @@ Mesh* PlanetTileTessellator::createTileDebugMesh(const G3MRenderContext* rc,
   
   FloatBufferBuilderFromGeodetic* vertices = FloatBufferBuilderFromGeodetic::builderWithFirstVertexAsCenter(rc->getPlanet());
   TileTessellatorMeshData tileTessellatorMeshData;
+#warning NOT WORKING WITH DEMGRID
   createSurfaceVertices(meshResolution,
                         meshSector,
                         tile->getElevationData(),
@@ -374,6 +375,9 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
   const int mry = grid->getExtent()._y;
   Sector sector = grid->getSector();
   
+  bool interestingTile = grid->getSector().contains(Angle::fromDegrees(27.987907), Angle::fromDegrees(86.925090)); //Everest
+  
+  
   for (int j = mry-1; j > -1; j--) { //Moving on lat
     
     for (int i = 0; i < mrx; i++) { //Moving on lon
@@ -382,6 +386,10 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
       verticesArray.push_back(new Geodetic2D(position));
       
       const double rawElevation = grid->getElevation(i, j);
+      
+      if (interestingTile){
+        printf("%s -> %f\n", position.description().c_str(), rawElevation);
+      }
       
       double elevation = ISNAN(rawElevation)? 0 : rawElevation * verticalExaggeration;
       
@@ -409,6 +417,10 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
   tileTessellatorMeshData._minHeight = minElevation;
   tileTessellatorMeshData._maxHeight = maxElevation;
   tileTessellatorMeshData._averageHeight = sumElevation / (mrx * mry);
+  
+  if (interestingTile){
+    printf("Min %f, Max %f, Mean %f", minElevation, maxElevation, sumElevation / (mrx * mry));
+  }
   
   return minElevation;
   
@@ -469,25 +481,12 @@ double PlanetTileTessellator::createSurfaceVertices(const Vector2S& meshResoluti
   return minElevation;
 }
 
-void PlanetTileTessellator::createSurfaceTextureCoordinatesForDEMGrid(Projection* textureProjection,
-                                                                      const Vector2S& meshResolution,
-                                                                      const Sector& tileSector,
-                                                                      const Sector& meshSector,
-                                                                      FloatBufferBuilderFromCartesian2D& textCoords,
-                                                                      const std::vector<Geodetic2D*>& verticesArray) const{
-
-    for (int i = 0; i < verticesArray.size(); i++){
-      Vector2D tc = textureProjection->getUV(tileSector, *verticesArray[i]);
-      textCoords.add(tc);
-    }
-}
-
 void PlanetTileTessellator::createSurfaceTextureCoordinates(bool mercator,
                                                             const Vector2S& meshResolution,
                                                             const Sector& tileSector,
                                                             const Sector& meshSector,
                                                             FloatBufferBuilderFromCartesian2D& textCoords) const{
-
+  
   if (mercator) {
     const double mercatorLowerGlobalV = MercatorUtils::getMercatorV(tileSector._lower._latitude);
     const double mercatorUpperGlobalV = MercatorUtils::getMercatorV(tileSector._upper._latitude);
@@ -560,27 +559,20 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
                                                                tileTessellatorMeshData,
                                                                verticesArray);
   
-  Sector meshSector = demGrid->getSector();
-  Vector2S meshResolution = Vector2S((short)demGrid->getExtent()._x, (short)demGrid->getExtent()._y);
-  
 #warning turn this into parameter
   Projection* textureProjection;
   if (mercator){
     textureProjection = WebMercatorProjection::instance();
   } else{
-#warning TODO TEST
     textureProjection = WGS84Projetion::instance();
   }
   
+  for (int i = 0; i < verticesArray.size(); i++){
+    Vector2D tc = textureProjection->getUV(tileSector, *verticesArray[i]);
+    textCoords.add(tc);
+  }
   
-  createSurfaceTextureCoordinatesForDEMGrid(textureProjection,
-                                            meshResolution,
-                                            tileSector,
-                                            meshSector,
-                                            textCoords,
-                                            verticesArray);
-  
-  createSurfaceIndices(meshResolution, indices);
+  createSurfaceIndices(Vector2S((short)demGrid->getExtent()._x, (short)demGrid->getExtent()._y), indices);
   
   //Deleting vertices
   for (int i = 0; i < verticesArray.size(); i++) {

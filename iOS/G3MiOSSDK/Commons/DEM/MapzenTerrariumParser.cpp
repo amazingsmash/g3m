@@ -72,7 +72,12 @@ FloatBufferDEMGrid* MapzenTerrariumParser::parse(const IImage* image,
   for (int x = 0; x < width; x++) {
     for (int y = 0; y < height; y++) {
       image->getPixel(x, y, pixel);
-      const float elevation = ((pixel._red * 256.0f) + pixel._green + (pixel._blue / 256.0f)) - 32768.0f;
+      
+      const int r = pixel._red;
+      const int g = pixel._green;
+      const int b = pixel._blue;
+      
+      const float elevation = ((r * 256.0f) + g + (b / 256.0f)) - 32768.0f;
       const int index = ((height-1-y) * width) + x;
       buffer[index] = elevation;
     }

@@ -155,13 +155,6 @@ private:
                                        const Sector& meshSector,
                                        FloatBufferBuilderFromCartesian2D& textCoords) const;
   
-  void createSurfaceTextureCoordinatesForDEMGrid(Projection* textureProjection,
-                                       const Vector2S& meshResolution,
-                                       const Sector& tileSector,
-                                       const Sector& meshSector,
-                                       FloatBufferBuilderFromCartesian2D& textCoords,
-                                       const std::vector<Geodetic2D*>& verticesArray) const;
-  
   void createSurfaceIndices(const Vector2S& meshResolution,
                             ShortBufferBuilder& indices) const;
   

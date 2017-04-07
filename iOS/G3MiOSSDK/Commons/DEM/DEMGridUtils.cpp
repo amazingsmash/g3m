@@ -64,26 +64,25 @@ Mesh* DEMGridUtils::createDebugMesh(const DEMGrid* grid,
   FloatBufferBuilderFromGeodetic* vertices = FloatBufferBuilderFromGeodetic::builderWithFirstVertexAsCenter(planet);
   FloatBufferBuilderFromColor colors;
 
-  const Projection* projection = grid->getProjection();
   const Vector2I extent = grid->getExtent();
   const Sector   sector = grid->getSector();
 
   for (int x = 0; x < extent._x; x++) {
-    const double u = (double) x / (extent._x  - 1);
-    const Angle longitude = projection->getInnerPointLongitude(sector, u).add(offset._longitude);
-
     for (int y = 0; y < extent._y; y++) {
-      const double elevation = grid->getElevation(x, y);
-      if (!ISNAN(elevation)) {
-        const double v = 1.0 - ( (double) y / (extent._y - 1) );
-        const Angle latitude = projection->getInnerPointLatitude(sector, v).add(offset._latitude);
+      
+      double h = grid->getElevation(x, y);
+      if (!ISNAN(h)) {
+        
+        Geodetic2D g = grid->getInnerPoint(x, y);
+        vertices->add(g._latitude.add(offset._latitude), g._longitude.add(offset._longitude), h);
 
-        const double height = (elevation + offset._height) * verticalExaggeration;
-
-        vertices->add(latitude, longitude, height);
-
-        const float gray = (float) ((elevation - minElevation) / deltaElevation);
-        colors.add(gray, gray, gray, 1);
+        const float gray = (float) ((h - minElevation) / deltaElevation);
+        
+        if (h > 0){
+           colors.add(1.0, gray, gray, 1);
+        } else{
+          colors.add(0.0, gray, gray, 1);
+        }
       }
     }
   }
