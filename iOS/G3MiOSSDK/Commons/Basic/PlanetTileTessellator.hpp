@@ -20,13 +20,12 @@ class FloatBufferBuilderFromGeodetic;
 class ShortBufferBuilder;
 class Vector2S;
 
-
 class PlanetTileTessellatorData {
 public:
   FloatBufferBuilderFromCartesian2D* _textCoords;
   PlanetTileTessellatorData(FloatBufferBuilderFromCartesian2D* textCoords):
   _textCoords(textCoords) {}
-
+  
   ~PlanetTileTessellatorData() {
     delete _textCoords;
   }
@@ -42,42 +41,42 @@ private:
 #ifdef JAVA_CODE
   private Sector _renderedSector;
 #endif
-
+  
   Vector2S calculateResolution(const PlanetRenderContext* prc,
                                const Tile* tile,
                                const Sector& renderedSector) const;
-
+  
   bool needsEastSkirt(const Sector& tileSector) const {
     if (_renderedSector == NULL) {
       return true;
     }
     return _renderedSector->_upper._longitude.greaterThan(tileSector._upper._longitude);
   }
-
+  
   bool needsNorthSkirt(const Sector& tileSector) const {
     if (_renderedSector == NULL) {
       return true;
     }
     return _renderedSector->_upper._latitude.greaterThan(tileSector._upper._latitude);
   }
-
+  
   bool needsWestSkirt(const Sector& tileSector) const {
     if (_renderedSector == NULL) {
       return true;
     }
     return _renderedSector->_lower._longitude.lowerThan(tileSector._lower._longitude);
   }
-
+  
   bool needsSouthSkirt(const Sector& tileSector) const {
     if (_renderedSector == NULL) {
       return true;
     }
     return _renderedSector->_lower._latitude.lowerThan(tileSector._lower._latitude);
   }
-
+  
   Sector getRenderedSectorForTile(const Tile* tile) const;
-
-
+  
+  
   double createSurfaceVertices(const Vector2S& meshResolution, //Mesh resolution
                                const Sector& meshSector,
                                const ElevationData* elevationData,
@@ -86,10 +85,11 @@ private:
                                TileTessellatorMeshData& tileTessellatorMeshData) const;
   
   double createSurfaceVerticesFromDEMGrid(const DEMGrid* grid, //At this point DEMGrid must have proper sector and res.
-                               float verticalExaggeration,
-                               FloatBufferBuilderFromGeodetic* vertices,
-                               TileTessellatorMeshData& tileTessellatorMeshData) const;
-
+                                          float verticalExaggeration,
+                                          FloatBufferBuilderFromGeodetic* vertices,
+                                          TileTessellatorMeshData& tileTessellatorMeshData,
+                                          std::vector<Geodetic2D*>& verticesArray) const;
+  
   double createSurface(const Sector& tileSector,
                        const DEMGrid* demGrid,
                        float verticalExaggeration,
@@ -109,7 +109,7 @@ private:
                        ShortBufferBuilder& indices,
                        FloatBufferBuilderFromCartesian2D& textCoords,
                        TileTessellatorMeshData& tileTessellatorMeshData) const;
-
+  
   void createEastSkirt(const Planet* planet,
                        const Sector& tileSector,
                        const Sector& meshSector,
@@ -118,7 +118,7 @@ private:
                        FloatBufferBuilderFromGeodetic* vertices,
                        ShortBufferBuilder& indices,
                        FloatBufferBuilderFromCartesian2D& textCoords) const;
-
+  
   void createNorthSkirt(const Planet* planet,
                         const Sector& tileSector,
                         const Sector& meshSector,
@@ -127,7 +127,7 @@ private:
                         FloatBufferBuilderFromGeodetic* vertices,
                         ShortBufferBuilder& indices,
                         FloatBufferBuilderFromCartesian2D& textCoords) const;
-
+  
   void createWestSkirt(const Planet* planet,
                        const Sector& tileSector,
                        const Sector& meshSector,
@@ -136,7 +136,7 @@ private:
                        FloatBufferBuilderFromGeodetic* vertices,
                        ShortBufferBuilder& indices,
                        FloatBufferBuilderFromCartesian2D& textCoords) const;
-
+  
   void createSouthSkirt(const Planet* planet,
                         const Sector& tileSector,
                         const Sector& meshSector,
@@ -145,41 +145,57 @@ private:
                         FloatBufferBuilderFromGeodetic* vertices,
                         ShortBufferBuilder& indices,
                         FloatBufferBuilderFromCartesian2D& textCoords) const;
-
+  
   static double skirtDepthForSector(const Planet* planet, const Sector& sector);
-
+  
+  void createSurfaceTextureCoordinates(bool mercator,
+                                       const Vector2S& meshResolution,
+                                       const Sector& tileSector,
+                                       const Sector& meshSector,
+                                       FloatBufferBuilderFromCartesian2D& textCoords) const;
+  
+  void createSurfaceTextureCoordinatesForDEMGrid(bool mercator,
+                                       const Vector2S& meshResolution,
+                                       const Sector& tileSector,
+                                       const Sector& meshSector,
+                                       FloatBufferBuilderFromCartesian2D& textCoords,
+                                       const std::vector<Geodetic2D*>& verticesArray) const;
+  
+  void createSurfaceIndices(const Vector2S& meshResolution,
+                            ShortBufferBuilder& indices) const;
+  
 public:
-
+  
   PlanetTileTessellator(const bool skirted, const Sector& sector);
-
+  
   ~PlanetTileTessellator();
-
+  
   Vector2S getTileMeshResolution(const G3MRenderContext* rc,
                                  const PlanetRenderContext* prc,
                                  const Tile* tile) const;
-
+  
   Mesh* createTileMesh(const G3MRenderContext* rc,
                        const PlanetRenderContext* prc,
                        Tile* tile,
                        const ElevationData* elevationData,
                        const DEMGrid* grid,
                        TileTessellatorMeshData& tileTessellatorMeshData) const;
-
+  
   Mesh* createTileDebugMesh(const G3MRenderContext* rc,
                             const PlanetRenderContext* prc,
                             const Tile* tile) const;
-
+  
   IFloatBuffer* createTextCoords(const Vector2S& resolution,
                                  const Tile* tile) const;
-
+  
   const Vector2F getTextCoord(const Tile* tile,
                               const Angle& latitude,
                               const Angle& longitude) const;
-
+  
   void setRenderedSector(const Sector& sector) {
     if (_renderedSector == NULL || !_renderedSector->isEquals(sector)) {
       delete _renderedSector;
-
+      
       if (sector.isEquals(Sector::FULL_SPHERE)) {
         _renderedSector = NULL;
       }
@@ -188,7 +204,7 @@ public:
       }
     }
   }
-
+  
 };
 
 #endif

@@ -130,7 +130,7 @@ Mesh* PlanetTileTessellator::createTileMesh(const G3MRenderContext* rc,
   FloatBufferBuilderFromCartesian2D* textCoords = new FloatBufferBuilderFromCartesian2D();
   
   
-  double minElevation = 0;
+  double minElevation;
   if (grid == NULL){
     
     minElevation = createSurface(tileSector,
@@ -361,7 +361,8 @@ Sector PlanetTileTessellator::getRenderedSectorForTile(const Tile* tile) const {
 double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* grid,
                                                                float verticalExaggeration,
                                                                FloatBufferBuilderFromGeodetic* vertices,
-                                                               TileTessellatorMeshData& tileTessellatorMeshData) const{
+                                                               TileTessellatorMeshData& tileTessellatorMeshData,
+                                                               std::vector<Geodetic2D*>& verticesArray) const{
   const IMathUtils* mu = IMathUtils::instance();
   double minElevation = mu->maxDouble();
   double maxElevation = mu->minDouble();
@@ -376,12 +377,11 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
     for (int i = 0; i < mrx; i++) { //Moving on lon
       
       const Geodetic2D position = grid->getInnerPoint(i, j); //Starting at max lat, min lon
-      
-      printf("Lat %f\n", position._latitude._degrees);
+      verticesArray.push_back(new Geodetic2D(position));
       
       const double rawElevation = grid->getElevation(i, j);
       
-      const double elevation = ISNAN(rawElevation)? 0 : rawElevation * verticalExaggeration;
+      double elevation = ISNAN(rawElevation)? 0 : rawElevation * verticalExaggeration;
       
       if (elevation < minElevation) {
         minElevation = elevation;
@@ -433,8 +433,6 @@ double PlanetTileTessellator::createSurfaceVertices(const Vector2S& meshResoluti
       const Geodetic2D position = meshSector.getInnerPoint(u, v); //Starting at max lat, min lon
       double elevation = 0;
       
-      printf("%s", position.description().c_str());
-      
       if (elevationData != NULL) {
         const double rawElevation = elevationData->getElevationAt(position);
         
@@ -469,28 +467,86 @@ double PlanetTileTessellator::createSurfaceVertices(const Vector2S& meshResoluti
   return minElevation;
 }
 
+void PlanetTileTessellator::createSurfaceTextureCoordinatesForDEMGrid(bool mercator,
+                                                                      const Vector2S& meshResolution,
+                                                                      const Sector& tileSector,
+                                                                      const Sector& meshSector,
+                                                                      FloatBufferBuilderFromCartesian2D& textCoords,
+                                                                      const std::vector<Geodetic2D*>& verticesArray) const{
+  
+  if (mercator){
+    const double mercatorLowerGlobalV = MercatorUtils::getMercatorV(tileSector._lower._latitude);
+    const double mercatorUpperGlobalV = MercatorUtils::getMercatorV(tileSector._upper._latitude);
+    const double mercatorDeltaGlobalV = mercatorLowerGlobalV - mercatorUpperGlobalV;
+    for (int i = 0; i < verticesArray.size(); i++){
+      //U
+      const double m_u = tileSector.getUCoordinate(verticesArray[i]->_longitude);
+      
+      //V
+      const double mercatorGlobalV = MercatorUtils::getMercatorV(verticesArray[i]->_latitude);
+      const double m_v = (mercatorGlobalV - mercatorUpperGlobalV) / mercatorDeltaGlobalV;
+      
+      textCoords.add((float)m_u, (float)m_v);
+    }
+  } else{
+#warning TODO
+  }
+  
+  
+  //  if (mercator) {
+  //    const double mercatorLowerGlobalV = MercatorUtils::getMercatorV(tileSector._lower._latitude);
+  //    const double mercatorUpperGlobalV = MercatorUtils::getMercatorV(tileSector._upper._latitude);
+  //    const double mercatorDeltaGlobalV = mercatorLowerGlobalV - mercatorUpperGlobalV;
+  //
+  //    for (int j = 0; j < meshResolution._y; j++) {
+  //      const double v = (double) j / (meshResolution._y - 1);
+  //
+  //      for (int i = 0; i < meshResolution._x; i++) {
+  //        const double u = (double) i / (meshResolution._x - 1);
+  //
+  //        const Angle lat = Angle::linearInterpolation( meshSector._lower._latitude,  meshSector._upper._latitude,  1.0 - v );
+  //        const Angle lon = Angle::linearInterpolation( meshSector._lower._longitude, meshSector._upper._longitude,       u );
+  //
+  //
+  //
+  //        //U
+  //        const double m_u = tileSector.getUCoordinate(lon);
+  //
+  //        //V
+  //        const double mercatorGlobalV = MercatorUtils::getMercatorV(lat);
+  //        const double m_v = (mercatorGlobalV - mercatorUpperGlobalV) / mercatorDeltaGlobalV;
+  //
+  //        //        if (madrid){
+  //        //          printf("%f %f\n", m_v, m_u);
+  //        //        }
+  //
+  //        sum = sum + m_v;
+  //        //printf("%f\n", m_v);
+  //        textCoords.add((float)m_u, (float)m_v);
+  //      }
+  //    }
+  //
+  //  }
+  //  else {
+  //    for (int j = 0; j < meshResolution._y; j++) {
+  //      const double v = (double) j / (meshResolution._y - 1);
+  //      for (int i = 0; i < meshResolution._x; i++) {
+  //        const double u = (double) i / (meshResolution._x - 1);
+  //        textCoords.add((float)u, (float)v);
+  //      }
+  //    }
+  //  }
+  //
+  //  printf("%s -> %f\n", meshSector.description().c_str(),  sum );
+  
+}
 
-double PlanetTileTessellator::createSurface(const Sector& tileSector,
-                                            const DEMGrid* demGrid,
-                                            float verticalExaggeration,
-                                            bool mercator,
-                                            FloatBufferBuilderFromGeodetic* vertices,
-                                            ShortBufferBuilder& indices,
-                                            FloatBufferBuilderFromCartesian2D& textCoords,
-                                            TileTessellatorMeshData& tileTessellatorMeshData) const {
-  
-  //VERTICES
-  const double minElevation = createSurfaceVerticesFromDEMGrid(demGrid,
-                                                    verticalExaggeration,
-                                                    vertices,
-                                                    tileTessellatorMeshData);
-  
-  Vector2I meshResolution = demGrid->getExtent();
-  Sector meshSector = demGrid->getSector();
-  
-  
-  //TEX COORDINATES
-  
+void PlanetTileTessellator::createSurfaceTextureCoordinates(bool mercator,
+                                                            const Vector2S& meshResolution,
+                                                            const Sector& tileSector,
+                                                            const Sector& meshSector,
+                                                            FloatBufferBuilderFromCartesian2D& textCoords) const{
+
   if (mercator) {
     const double mercatorLowerGlobalV = MercatorUtils::getMercatorV(tileSector._lower._latitude);
     const double mercatorUpperGlobalV = MercatorUtils::getMercatorV(tileSector._upper._latitude);
@@ -515,6 +571,7 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
         textCoords.add((float)m_u, (float)m_v);
       }
     }
+    
   }
   else {
     for (int j = 0; j < meshResolution._y; j++) {
@@ -525,7 +582,10 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
       }
     }
   }
-  
+}
+
+void PlanetTileTessellator::createSurfaceIndices(const Vector2S& meshResolution,
+                                                 ShortBufferBuilder& indices) const{
   //INDEX
   for (short j = 0; j < (meshResolution._y-1); j++) {
     const short jTimesResolution = (short)(j*meshResolution._x);
@@ -537,6 +597,43 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
       indices.add((short)(jTimesResolution + i + meshResolution._x));
     }
     indices.add((short)(jTimesResolution + 2*meshResolution._x - 1));
+  }
+}
+
+
+double PlanetTileTessellator::createSurface(const Sector& tileSector,
+                                            const DEMGrid* demGrid,
+                                            float verticalExaggeration,
+                                            bool mercator,
+                                            FloatBufferBuilderFromGeodetic* vertices,
+                                            ShortBufferBuilder& indices,
+                                            FloatBufferBuilderFromCartesian2D& textCoords,
+                                            TileTessellatorMeshData& tileTessellatorMeshData) const {
+  
+  std::vector<Geodetic2D*> verticesArray;
+  
+  //VERTICES
+  const double minElevation = createSurfaceVerticesFromDEMGrid(demGrid,
+                                                               verticalExaggeration,
+                                                               vertices,
+                                                               tileTessellatorMeshData,
+                                                               verticesArray);
+  
+  Sector meshSector = demGrid->getSector();
+  Vector2S meshResolution = Vector2S((short)demGrid->getExtent()._x, (short)demGrid->getExtent()._y);
+  
+  createSurfaceTextureCoordinatesForDEMGrid(mercator,
+                                            meshResolution,
+                                            tileSector,
+                                            meshSector,
+                                            textCoords,
+                                            verticesArray);
+  
+  createSurfaceIndices(meshResolution, indices);
+  
+  //Deleting vertices
+  for (int i = 0; i < verticesArray.size(); i++) {
+    delete verticesArray[i];
   }
   
   return minElevation;
@@ -564,56 +661,64 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
                                                     vertices,
                                                     tileTessellatorMeshData);
   
+  createSurfaceTextureCoordinates(mercator,
+                                  meshResolution,
+                                  tileSector,
+                                  meshSector,
+                                  textCoords);
   
-  //TEX COORDINATES
+  createSurfaceIndices(meshResolution, indices);
   
-  if (mercator) {
-    const double mercatorLowerGlobalV = MercatorUtils::getMercatorV(tileSector._lower._latitude);
-    const double mercatorUpperGlobalV = MercatorUtils::getMercatorV(tileSector._upper._latitude);
-    const double mercatorDeltaGlobalV = mercatorLowerGlobalV - mercatorUpperGlobalV;
-    
-    for (int j = 0; j < meshResolution._y; j++) {
-      const double v = (double) j / (meshResolution._y - 1);
-      
-      for (int i = 0; i < meshResolution._x; i++) {
-        const double u = (double) i / (meshResolution._x - 1);
-        
-        const Angle lat = Angle::linearInterpolation( meshSector._lower._latitude,  meshSector._upper._latitude,  1.0 - v );
-        const Angle lon = Angle::linearInterpolation( meshSector._lower._longitude, meshSector._upper._longitude,       u );
-        
-        //U
-        const double m_u = tileSector.getUCoordinate(lon);
-        
-        //V
-        const double mercatorGlobalV = MercatorUtils::getMercatorV(lat);
-        const double m_v = (mercatorGlobalV - mercatorUpperGlobalV) / mercatorDeltaGlobalV;
-        
-        textCoords.add((float)m_u, (float)m_v);
-      }
-    }
-  }
-  else {
-    for (int j = 0; j < meshResolution._y; j++) {
-      const double v = (double) j / (meshResolution._y - 1);
-      for (int i = 0; i < meshResolution._x; i++) {
-        const double u = (double) i / (meshResolution._x - 1);
-        textCoords.add((float)u, (float)v);
-      }
-    }
-  }
   
-  //INDEX
-  for (short j = 0; j < (meshResolution._y-1); j++) {
-    const short jTimesResolution = (short)(j*meshResolution._x);
-    if (j > 0) {
-      indices.add(jTimesResolution);
-    }
-    for (short i = 0; i < meshResolution._x; i++) {
-      indices.add((short)(jTimesResolution + i));
-      indices.add((short)(jTimesResolution + i + meshResolution._x));
-    }
-    indices.add((short)(jTimesResolution + 2*meshResolution._x - 1));
-  }
+  //  //TEX COORDINATES
+  //
+  //  if (mercator) {
+  //    const double mercatorLowerGlobalV = MercatorUtils::getMercatorV(tileSector._lower._latitude);
+  //    const double mercatorUpperGlobalV = MercatorUtils::getMercatorV(tileSector._upper._latitude);
+  //    const double mercatorDeltaGlobalV = mercatorLowerGlobalV - mercatorUpperGlobalV;
+  //
+  //    for (int j = 0; j < meshResolution._y; j++) {
+  //      const double v = (double) j / (meshResolution._y - 1);
+  //
+  //      for (int i = 0; i < meshResolution._x; i++) {
+  //        const double u = (double) i / (meshResolution._x - 1);
+  //
+  //        const Angle lat = Angle::linearInterpolation( meshSector._lower._latitude,  meshSector._upper._latitude,  1.0 - v );
+  //        const Angle lon = Angle::linearInterpolation( meshSector._lower._longitude, meshSector._upper._longitude,       u );
+  //
+  //        //U
+  //        const double m_u = tileSector.getUCoordinate(lon);
+  //
+  //        //V
+  //        const double mercatorGlobalV = MercatorUtils::getMercatorV(lat);
+  //        const double m_v = (mercatorGlobalV - mercatorUpperGlobalV) / mercatorDeltaGlobalV;
+  //
+  //        textCoords.add((float)m_u, (float)m_v);
+  //      }
+  //    }
+  //  }
+  //  else {
+  //    for (int j = 0; j < meshResolution._y; j++) {
+  //      const double v = (double) j / (meshResolution._y - 1);
+  //      for (int i = 0; i < meshResolution._x; i++) {
+  //        const double u = (double) i / (meshResolution._x - 1);
+  //        textCoords.add((float)u, (float)v);
+  //      }
+  //    }
+  //  }
+  
+  //  //INDEX
+  //  for (short j = 0; j < (meshResolution._y-1); j++) {
+  //    const short jTimesResolution = (short)(j*meshResolution._x);
+  //    if (j > 0) {
+  //      indices.add(jTimesResolution);
+  //    }
+  //    for (short i = 0; i < meshResolution._x; i++) {
+  //      indices.add((short)(jTimesResolution + i));
+  //      indices.add((short)(jTimesResolution + i + meshResolution._x));
+  //    }
+  //    indices.add((short)(jTimesResolution + 2*meshResolution._x - 1));
+  //  }
   
   return minElevation;
 }

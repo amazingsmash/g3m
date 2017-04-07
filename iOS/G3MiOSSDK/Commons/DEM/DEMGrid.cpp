@@ -48,14 +48,13 @@ Geodetic2D DEMGrid::getInnerPoint(int x, int y) const{
   
   Sector s = getSector();
   
-#warning Lats come with wrong sign???
   const Angle lat = getProjection()->getInnerPointLatitude(s, v);
   const Angle lon = getProjection()->getInnerPointLongitude(s, u);
   
-#warning REMOVE TEST
-  if (getSector().shrinkedByPercent(-0.02f).contains(lat, lon)){
-    ILogger::instance()->logError("Logic Error " + getSector().description() + " P: " + Geodetic2D(lat, lon).description());
-  }
+//#warning REMOVE TEST
+//  if (getSector().contains(lat, lon)){
+//    ILogger::instance()->logError("Logic Error " + getSector().description() + " P: " + Geodetic2D(lat, lon).description());
+//  }
   
   return Geodetic2D(lat, lon);
 }
