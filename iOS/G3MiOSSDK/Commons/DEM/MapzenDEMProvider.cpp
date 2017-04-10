@@ -127,7 +127,7 @@ MapzenDEMProvider::MapzenDEMProvider(const std::string&  apiKey,
                                      const TimeInterval& timeToCache,
                                      bool                readExpired,
                                      const double        deltaHeight) :
-MercatorPyramidDEMProvider(deltaHeight,
+WebMercatorPyramidDEMProvider(deltaHeight,
                            Vector2S((short)256, (short)256)),
 _apiKey(apiKey),
 _downloadPriority(downloadPriority),

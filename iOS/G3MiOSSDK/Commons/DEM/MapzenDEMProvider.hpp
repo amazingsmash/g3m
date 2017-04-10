@@ -9,7 +9,7 @@
 #ifndef MapzenDEMProvider_hpp
 #define MapzenDEMProvider_hpp
 
-#include "MercatorPyramidDEMProvider.hpp"
+#include "WebMercatorPyramidDEMProvider.hpp"
 
 #include "TimeInterval.hpp"
 #include "DownloadPriority.hpp"
@@ -19,7 +19,7 @@ class FloatBufferDEMGrid;
 class Sector;
 
 
-class MapzenDEMProvider : public MercatorPyramidDEMProvider {
+class MapzenDEMProvider : public WebMercatorPyramidDEMProvider {
 private:
   static int _instanceCounter;
 

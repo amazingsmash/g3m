@@ -1,12 +1,12 @@
 //
-//  MercatorPyramidDEMProvider.cpp
+//  WebMercatorPyramidDEMProvider.cpp
 //  G3MiOSSDK
 //
 //  Created by Diego Gomez Deck on 10/19/16.
 //
 //
 
-#include "MercatorPyramidDEMProvider.hpp"
+#include "WebMercatorPyramidDEMProvider.hpp"
 
 
 #include "Sector.hpp"
@@ -15,19 +15,19 @@
 #include "PyramidNode.hpp"
 
 
-MercatorPyramidDEMProvider::MercatorPyramidDEMProvider(const double deltaHeight,
+WebMercatorPyramidDEMProvider::WebMercatorPyramidDEMProvider(const double deltaHeight,
                                                        const Vector2S& tileExtent) :
 PyramidDEMProvider(deltaHeight, 1, tileExtent)
 {
 }
 
-MercatorPyramidDEMProvider::~MercatorPyramidDEMProvider() {
+WebMercatorPyramidDEMProvider::~WebMercatorPyramidDEMProvider() {
 #ifdef JAVA_CODE
   super.dispose();
 #endif
 }
 
-PyramidNode* MercatorPyramidDEMProvider::createNode(PyramidNode* parent,
+PyramidNode* WebMercatorPyramidDEMProvider::createNode(PyramidNode* parent,
                                                     const size_t childID) {
   if (parent == NULL) {
     // creating root node

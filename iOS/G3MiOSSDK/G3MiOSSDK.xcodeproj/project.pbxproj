@@ -369,9 +369,9 @@
 		CF9AEBC2159B3FEB004C3558 /* PlanetTileTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9AEBC1159B3FEA004C3558 /* PlanetTileTessellator.cpp */; };
 		CF9B45F61DB79EE3009ABF32 /* DEMListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9B45F41DB79EE3009ABF32 /* DEMListener.cpp */; };
 		CF9B45F81DB79FB1009ABF32 /* DEMListener.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF9B45F51DB79EE3009ABF32 /* DEMListener.hpp */; };
-		CF9B45FC1DB7B613009ABF32 /* MercatorPyramidDEMProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9B45FA1DB7B613009ABF32 /* MercatorPyramidDEMProvider.cpp */; };
+		CF9B45FC1DB7B613009ABF32 /* WebMercatorPyramidDEMProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9B45FA1DB7B613009ABF32 /* WebMercatorPyramidDEMProvider.cpp */; };
 		CF9B45FF1DB7B648009ABF32 /* PyramidDEMProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9B45FD1DB7B648009ABF32 /* PyramidDEMProvider.cpp */; };
-		CF9B46001DB7B703009ABF32 /* MercatorPyramidDEMProvider.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF9B45FB1DB7B613009ABF32 /* MercatorPyramidDEMProvider.hpp */; };
+		CF9B46001DB7B703009ABF32 /* WebMercatorPyramidDEMProvider.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF9B45FB1DB7B613009ABF32 /* WebMercatorPyramidDEMProvider.hpp */; };
 		CF9B46011DB7B703009ABF32 /* PyramidDEMProvider.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF9B45FE1DB7B648009ABF32 /* PyramidDEMProvider.hpp */; };
 		CF9CD89A15DBE2C800C6FD7E /* CachedDownloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9CD89815DBE2C800C6FD7E /* CachedDownloader.cpp */; };
 		CF9D2D8815F7D3C100B5CE2E /* IBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D2D8615F7D3C100B5CE2E /* IBuffer.cpp */; };
@@ -888,7 +888,7 @@
 				CFF99FF91DB92AA9008E4F14 /* DEMSubscription.hpp in CopyFiles */,
 				CF0F414F1DB91634004B1000 /* PyramidNode.hpp in CopyFiles */,
 				D8299B991DA7D73D000923F9 /* AtmosphereRenderer.hpp in CopyFiles */,
-				CF9B46001DB7B703009ABF32 /* MercatorPyramidDEMProvider.hpp in CopyFiles */,
+				CF9B46001DB7B703009ABF32 /* WebMercatorPyramidDEMProvider.hpp in CopyFiles */,
 				CF9B46011DB7B703009ABF32 /* PyramidDEMProvider.hpp in CopyFiles */,
 				CF9B45F81DB79FB1009ABF32 /* DEMListener.hpp in CopyFiles */,
 				CF491C701DB62F4500476900 /* GAsyncTask.hpp in CopyFiles */,
@@ -1770,8 +1770,8 @@
 		CF9AEBC1159B3FEA004C3558 /* PlanetTileTessellator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = PlanetTileTessellator.cpp; path = Commons/Basic/PlanetTileTessellator.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		CF9B45F41DB79EE3009ABF32 /* DEMListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DEMListener.cpp; path = Commons/DEM/DEMListener.cpp; sourceTree = "<group>"; };
 		CF9B45F51DB79EE3009ABF32 /* DEMListener.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = DEMListener.hpp; path = Commons/DEM/DEMListener.hpp; sourceTree = "<group>"; };
-		CF9B45FA1DB7B613009ABF32 /* MercatorPyramidDEMProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = MercatorPyramidDEMProvider.cpp; path = Commons/DEM/MercatorPyramidDEMProvider.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		CF9B45FB1DB7B613009ABF32 /* MercatorPyramidDEMProvider.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; name = MercatorPyramidDEMProvider.hpp; path = Commons/DEM/MercatorPyramidDEMProvider.hpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		CF9B45FA1DB7B613009ABF32 /* WebMercatorPyramidDEMProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = WebMercatorPyramidDEMProvider.cpp; path = Commons/DEM/WebMercatorPyramidDEMProvider.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		CF9B45FB1DB7B613009ABF32 /* WebMercatorPyramidDEMProvider.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; name = WebMercatorPyramidDEMProvider.hpp; path = Commons/DEM/WebMercatorPyramidDEMProvider.hpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		CF9B45FD1DB7B648009ABF32 /* PyramidDEMProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = PyramidDEMProvider.cpp; path = Commons/DEM/PyramidDEMProvider.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		CF9B45FE1DB7B648009ABF32 /* PyramidDEMProvider.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; name = PyramidDEMProvider.hpp; path = Commons/DEM/PyramidDEMProvider.hpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		CF9CD89815DBE2C800C6FD7E /* CachedDownloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = CachedDownloader.cpp; path = Commons/Interfaces/CachedDownloader.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -2910,8 +2910,8 @@
 				CFC35E681DAFBBF200929BE6 /* MapzenDEMProvider.hpp */,
 				CF66EB7F1DB5252900EFF718 /* MapzenTerrariumParser.cpp */,
 				CF66EB801DB5252900EFF718 /* MapzenTerrariumParser.hpp */,
-				CF9B45FA1DB7B613009ABF32 /* MercatorPyramidDEMProvider.cpp */,
-				CF9B45FB1DB7B613009ABF32 /* MercatorPyramidDEMProvider.hpp */,
+				CF9B45FA1DB7B613009ABF32 /* WebMercatorPyramidDEMProvider.cpp */,
+				CF9B45FB1DB7B613009ABF32 /* WebMercatorPyramidDEMProvider.hpp */,
 				CF9B45FD1DB7B648009ABF32 /* PyramidDEMProvider.cpp */,
 				CF9B45FE1DB7B648009ABF32 /* PyramidDEMProvider.hpp */,
 				CF8F8C651DB8D9FC00F8396E /* PyramidNode.cpp */,
@@ -3565,7 +3565,7 @@
 				D824A8561C295BCD002C84AA /* TimedCacheTileLODTester.cpp in Sources */,
 				CFF9643D19082C570044F06D /* ChessboardTileImageProvider.cpp in Sources */,
 				CF857B33164C77B00089F1DE /* SGMaterialNode.cpp in Sources */,
-				CF9B45FC1DB7B613009ABF32 /* MercatorPyramidDEMProvider.cpp in Sources */,
+				CF9B45FC1DB7B613009ABF32 /* WebMercatorPyramidDEMProvider.cpp in Sources */,
 				CF857B37164C78B10089F1DE /* SGTextureNode.cpp in Sources */,
 				CF857B3B164C7AFC0089F1DE /* SGGeometryNode.cpp in Sources */,
 				CF857B3F164C80DB0089F1DE /* SGTranslateNode.cpp in Sources */,

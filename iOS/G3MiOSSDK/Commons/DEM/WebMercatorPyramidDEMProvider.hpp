@@ -1,23 +1,23 @@
 //
-//  MercatorPyramidDEMProvider.hpp
+//  WebMercatorPyramidDEMProvider.hpp
 //  G3MiOSSDK
 //
 //  Created by Diego Gomez Deck on 10/19/16.
 //
 //
 
-#ifndef MercatorPyramidDEMProvider_hpp
-#define MercatorPyramidDEMProvider_hpp
+#ifndef WebMercatorPyramidDEMProvider_hpp
+#define WebMercatorPyramidDEMProvider_hpp
 
 #include "PyramidDEMProvider.hpp"
 
-class MercatorPyramidDEMProvider : public PyramidDEMProvider {
+class WebMercatorPyramidDEMProvider : public PyramidDEMProvider {
 protected:
 
-  MercatorPyramidDEMProvider(const double deltaHeight,
+  WebMercatorPyramidDEMProvider(const double deltaHeight,
                              const Vector2S& tileExtent);
 
-  virtual ~MercatorPyramidDEMProvider();
+  virtual ~WebMercatorPyramidDEMProvider();
 
 public:
 
