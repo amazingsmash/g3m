@@ -2,103 +2,70 @@
 //  InterpolatedDEMGrid.cpp
 //  G3MiOSSDK
 //
-//  Created by Diego Gomez Deck on 11/18/16.
+//  Created by Jose Miguel SN on 10/04/2017.
 //
 //
 
 #include "InterpolatedDEMGrid.hpp"
-
-#include "Vector2S.hpp"
+#include "Projection.hpp"
+#include "Sector.hpp"
+#include "ILogger.hpp"
 #include "IMathUtils.hpp"
+#include "Vector2D.hpp"
 
 
-double InterpolatedDEMGrid::linearInterpolation(double from,
-                                                double to,
-                                                double alpha) {
-  return from + ((to - from) * alpha);
+InterpolatedDEMGrid::InterpolatedDEMGrid(DEMGrid* grid,
+                                         const Sector& sector,
+                                         const Vector2I& extent,
+                                         Interpolator* interpolator):
+DecoratorDEMGrid(grid,sector,extent),_interpolator(interpolator){
+  if (!_grid->getSector().fullContains(sector)){
+    ILogger::instance()->logError("Error creating InterpolatedDEMGrid");
+  }
 }
 
-double InterpolatedDEMGrid::bilinearInterpolation(double valueSW,
-                                                  double valueSE,
-                                                  double valueNE,
-                                                  double valueNW,
-                                                  double u,
-                                                  double v) {
-  const double alphaSW = (1.0 - u) * v;
-  const double alphaSE = u         * v;
-  const double alphaNE = u         * (1.0 - v);
-  const double alphaNW = (1.0 - u) * (1.0 - v);
-
-  return ((alphaSW * valueSW) +
-          (alphaSE * valueSE) +
-          (alphaNE * valueNE) +
-          (alphaNW * valueNW));
+InterpolatedDEMGrid::~InterpolatedDEMGrid(){
+  delete _interpolator;
 }
 
-InterpolatedDEMGrid* InterpolatedDEMGrid::create(const DEMGrid*  grid,
-                                                 const Vector2S& extent) {
-  return new InterpolatedDEMGrid(grid,
-                                 grid->getSector(),
-                                 Vector2I(extent._x, extent._y));
-}
-
-InterpolatedDEMGrid::InterpolatedDEMGrid(const DEMGrid*  grid,
-                                         const Sector&   sector,
-                                         const Vector2I& extent) :
-DecoratorDEMGrid(grid, sector, extent)
-{
-
-}
-
-double InterpolatedDEMGrid::getElevation(int x, int y) const {
-  const double u = (double) x / _extent._x;
-  const double v = (double) y / _extent._y;
-
-  return getElevationAt(_grid, u, v);
-}
-
-double InterpolatedDEMGrid::getElevationAt(const DEMGrid* grid,
-                                           double u,
-                                           double v) {
-  if ((u < 0) || (u > 1) ||
-      (v < 0) || (v > 1)) {
+double InterpolatedDEMGrid::getElevation(int x, int y) const{
+  
+  //Calculating position in Interpolated
+  Geodetic2D p = getInnerPoint(x, y);
+  
+  if (!_grid->getSector().contains(p)){
+    ILogger::instance()->logInfo("Requesting point outside of InterpolatedDEMGrid.");
     return NAND;
   }
-
-  const Vector2I gridExtent = grid->getExtent();
-  const double dX = u * (gridExtent._x - 1);
-  const double dY = v * (gridExtent._y - 1);
-
-  const int x = (int) dX;
-  const int y = (int) dY;
-  const int nextX = x + 1;
-  const int nextY = y + 1;
-  const double alphaY = dY - y;
-  const double alphaX = dX - x;
-
-  if (x == dX) {
-    if (y == dY) {
-      // exact on grid point
-      return grid->getElevation(x, y);
-    }
-
-    // linear on Y
-    const double heightY     = grid->getElevation(x,     y);
-    const double heightNextY = grid->getElevation(x, nextY);
-    return linearInterpolation(heightY, heightNextY, alphaY);
+  
+  const Vector2D uv = _grid->getProjection()->getUV(_grid->getSector(), p);
+  const Vector2I ge = _grid->getExtent();
+  const double gridX = uv._x * (ge._x-1);
+  const double gridY = (1.0 - uv._y) * (ge._y-1);
+  
+  const int fx = (int)IMathUtils::instance()->floor(gridX);
+  const int fy = (int)IMathUtils::instance()->floor(gridY);
+  
+  const double rx = gridX - (double)fx;
+  const double ry = gridY - (double)fy;
+  
+  if (rx == 0.0 && ry == 0.0){
+    return _grid->getElevation((int) uv._x, (int) uv._y);
   }
-
-  if (y == dY) {
-    // linear on X
-    const double heightX     = grid->getElevation(    x, y);
-    const double heightNextX = grid->getElevation(nextX, y);
-    return linearInterpolation(heightX, heightNextX, alphaX);
-  }
-
-  // bilinear
-  const double valueNW = grid->getElevation(    x,     y);
-  const double valueNE = grid->getElevation(nextX,     y);
-  const double valueSE = grid->getElevation(nextX, nextY);
-  const double valueSW = grid->getElevation(    x, nextY);
-  return bilinearInterpolation(valueSW, valueSE, valueNE, valueNW, alphaX, alphaY);
+  
+  const int fx1 = fx == ge._x-1? fx: fx+1;
+  const int fy1 = fy == ge._y-1? fy: fy+1;
+  
+  const double valueNW = _grid->getElevation(fx, fy);
+  const double valueSW = _grid->getElevation(fx, fy1);
+  const double valueNE = _grid->getElevation(fx1, fy);
+  const double valueSE = _grid->getElevation(fx1, fy1);
+  
+  double h = _interpolator->interpolation(valueSW, valueSE, valueNE, valueNW, rx, ry);
+  
+  //    printf("%s -> %d, %d -> %s (%f)\n", p.description().c_str(), fx, fy,
+  //           _grid->getInnerPoint(fx, fy).description().c_str(), h);
+  
+  return h;
 }
+

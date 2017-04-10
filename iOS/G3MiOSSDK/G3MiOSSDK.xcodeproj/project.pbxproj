@@ -76,7 +76,6 @@
 		CF02302819119B1E00FD85E0 /* TiledVectorLayerTileImageProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02302619119B1E00FD85E0 /* TiledVectorLayerTileImageProvider.cpp */; };
 		CF02302919119B2C00FD85E0 /* TiledVectorLayerTileImageProvider.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF02302719119B1E00FD85E0 /* TiledVectorLayerTileImageProvider.hpp */; };
 		CF02302A19119B2C00FD85E0 /* TiledVectorLayer.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF02302219119B0100FD85E0 /* TiledVectorLayer.hpp */; };
-		CF03D4ED1DDF682900766A7C /* InterpolatedDEMGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF03D4EB1DDF682900766A7C /* InterpolatedDEMGrid.cpp */; };
 		CF0421D619F9986D00F5D33F /* MutableVector2F.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0421D419F9986D00F5D33F /* MutableVector2F.cpp */; };
 		CF0672351DB52C2400126E40 /* MapzenTerrariumParser.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF66EB801DB5252900EFF718 /* MapzenTerrariumParser.hpp */; };
 		CF0755961715B9120084CC14 /* GFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0755941715B9120084CC14 /* GFont.cpp */; };
@@ -261,7 +260,6 @@
 		CF6D96B81E51F26000875823 /* FrustumPolicy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6D96B61E51F26000875823 /* FrustumPolicy.cpp */; };
 		CF6D96B91E51F40100875823 /* FrustumPolicy.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF6D96B71E51F26000875823 /* FrustumPolicy.hpp */; };
 		CF6D96BA1E51F40100875823 /* DecimatedDEMGrid.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF71F4F91DDF34A40055C4D7 /* DecimatedDEMGrid.hpp */; };
-		CF6D96BB1E51F40100875823 /* InterpolatedDEMGrid.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF03D4EC1DDF682900766A7C /* InterpolatedDEMGrid.hpp */; };
 		CF6D96BC1E51F40100875823 /* MutableQuaternionF.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF9227D41E31154300B79A87 /* MutableQuaternionF.hpp */; };
 		CF6D96BD1E51F40100875823 /* Quaternion.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF92FCF01E3B913400A439D3 /* Quaternion.hpp */; };
 		CF6D96BE1E51F40100875823 /* MutableAngle.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF49512C1E46316B00D10A70 /* MutableAngle.hpp */; };
@@ -650,6 +648,7 @@
 		D8D347BA15E5133B00EDB394 /* IStringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8D347B915E5133B00EDB394 /* IStringBuilder.cpp */; };
 		D8D894ED17731870007E41A5 /* GPUVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8D894EB17731870007E41A5 /* GPUVariable.cpp */; };
 		D8D894EE17731B6A007E41A5 /* GPUVariable.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8D894EC17731870007E41A5 /* GPUVariable.hpp */; };
+		D8E31FB51E9B8FDB000CE79E /* InterpolatedDEMGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8E31FB31E9B8FDB000CE79E /* InterpolatedDEMGrid.cpp */; };
 		D8EEF3B91577924D003FEB5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8EEF3B81577924D003FEB5E /* Foundation.framework */; };
 		D8F0C70B17B52702002A89E0 /* GenericQuadTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8F0C70A17B52701002A89E0 /* GenericQuadTree.cpp */; };
 		D8F2EBAD18994A7B001B6103 /* CoordinateSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8F2EBAB18994A7B001B6103 /* CoordinateSystem.cpp */; };
@@ -876,7 +875,6 @@
 				CF6D96C21E51FE0600875823 /* DynamicFrustumPolicy.hpp in CopyFiles */,
 				CF6D96B91E51F40100875823 /* FrustumPolicy.hpp in CopyFiles */,
 				CF6D96BA1E51F40100875823 /* DecimatedDEMGrid.hpp in CopyFiles */,
-				CF6D96BB1E51F40100875823 /* InterpolatedDEMGrid.hpp in CopyFiles */,
 				CF6D96BC1E51F40100875823 /* MutableQuaternionF.hpp in CopyFiles */,
 				CF6D96BD1E51F40100875823 /* Quaternion.hpp in CopyFiles */,
 				CF6D96BE1E51F40100875823 /* MutableAngle.hpp in CopyFiles */,
@@ -1425,8 +1423,6 @@
 		CF02302719119B1E00FD85E0 /* TiledVectorLayerTileImageProvider.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TiledVectorLayerTileImageProvider.hpp; path = Commons/Basic/TiledVectorLayerTileImageProvider.hpp; sourceTree = "<group>"; };
 		CF024DC616A84F330051255C /* VisibleSectorListener.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = VisibleSectorListener.hpp; path = Commons/Rendererers/VisibleSectorListener.hpp; sourceTree = "<group>"; };
 		CF03683416A499F0006CE160 /* LabelPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LabelPosition.h; path = Commons/Basic/LabelPosition.h; sourceTree = "<group>"; };
-		CF03D4EB1DDF682900766A7C /* InterpolatedDEMGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InterpolatedDEMGrid.cpp; path = Commons/DEM/InterpolatedDEMGrid.cpp; sourceTree = "<group>"; };
-		CF03D4EC1DDF682900766A7C /* InterpolatedDEMGrid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = InterpolatedDEMGrid.hpp; path = Commons/DEM/InterpolatedDEMGrid.hpp; sourceTree = "<group>"; };
 		CF0421D419F9986D00F5D33F /* MutableVector2F.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MutableVector2F.cpp; path = Commons/Geometry/MutableVector2F.cpp; sourceTree = "<group>"; };
 		CF0755941715B9120084CC14 /* GFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GFont.cpp; path = Commons/Basic/GFont.cpp; sourceTree = "<group>"; };
 		CF0755951715B9120084CC14 /* GFont.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GFont.hpp; path = Commons/Basic/GFont.hpp; sourceTree = "<group>"; };
@@ -2155,6 +2151,8 @@
 		D8D894EC17731870007E41A5 /* GPUVariable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GPUVariable.hpp; sourceTree = "<group>"; };
 		D8E17DD515FE2ABF00C980E6 /* IByteBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = IByteBuffer.hpp; path = Commons/Interfaces/IByteBuffer.hpp; sourceTree = "<group>"; };
 		D8E17DDC15FE2B4F00C980E6 /* ByteBuffer_iOS.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = ByteBuffer_iOS.hpp; path = Specific/Derived/ByteBuffer_iOS.hpp; sourceTree = "<group>"; };
+		D8E31FB31E9B8FDB000CE79E /* InterpolatedDEMGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InterpolatedDEMGrid.cpp; path = Commons/DEM/InterpolatedDEMGrid.cpp; sourceTree = "<group>"; };
+		D8E31FB41E9B8FDB000CE79E /* InterpolatedDEMGrid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = InterpolatedDEMGrid.hpp; path = Commons/DEM/InterpolatedDEMGrid.hpp; sourceTree = "<group>"; };
 		D8E76950160742FD008EC7B9 /* GLConstants.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GLConstants.hpp; sourceTree = "<group>"; };
 		D8EB78831637F6B500C4EB57 /* CameraGoToPositionEffect.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; name = CameraGoToPositionEffect.hpp; path = Commons/Basic/CameraGoToPositionEffect.hpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		D8EEF3B51577924D003FEB5E /* libG3MiOSSDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libG3MiOSSDK.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2908,8 +2906,6 @@
 				CFF99FF71DB929D0008E4F14 /* DEMSubscription.hpp */,
 				CF9FDBC71DB3B6F5009D972A /* FloatBufferDEMGrid.cpp */,
 				CF9FDBC81DB3B6F5009D972A /* FloatBufferDEMGrid.hpp */,
-				CF03D4EB1DDF682900766A7C /* InterpolatedDEMGrid.cpp */,
-				CF03D4EC1DDF682900766A7C /* InterpolatedDEMGrid.hpp */,
 				CFC35E671DAFBBF200929BE6 /* MapzenDEMProvider.cpp */,
 				CFC35E681DAFBBF200929BE6 /* MapzenDEMProvider.hpp */,
 				CF66EB7F1DB5252900EFF718 /* MapzenTerrariumParser.cpp */,
@@ -2924,6 +2920,8 @@
 				CF7338181DA57A7600C406D1 /* ShortBufferDEMGrid.hpp */,
 				CF44A0711DDE139600E5B270 /* SubsetDEMGrid.cpp */,
 				CF44A0721DDE139600E5B270 /* SubsetDEMGrid.hpp */,
+				D8E31FB31E9B8FDB000CE79E /* InterpolatedDEMGrid.cpp */,
+				D8E31FB41E9B8FDB000CE79E /* InterpolatedDEMGrid.hpp */,
 			);
 			name = DEM;
 			sourceTree = "<group>";
@@ -3471,6 +3469,7 @@
 				D81BA17115CBF19F004EF0B0 /* GL.cpp in Sources */,
 				CF2B32691911A5A500B4AC52 /* VectorLayer.cpp in Sources */,
 				D8378F9E1BFB32B900E6557E /* IDeviceAttitude.cpp in Sources */,
+				D8E31FB51E9B8FDB000CE79E /* InterpolatedDEMGrid.cpp in Sources */,
 				CC55C47F15D11D8500923D7B /* CameraDoubleTapHandler.cpp in Sources */,
 				CF4F78471804AD4B00550409 /* IDeviceInfo.cpp in Sources */,
 				CF8FF98B15D5539F000F79D1 /* LeveledTexturedMesh.cpp in Sources */,
@@ -3555,7 +3554,6 @@
 				CFE3B579164AE32E009975A5 /* SceneJSShapesParser.cpp in Sources */,
 				CF15759A1864C0E10059312A /* HUDAbsolutePosition.cpp in Sources */,
 				CF708F301836A43500AAB0B1 /* NormalsUtils.cpp in Sources */,
-				CF03D4ED1DDF682900766A7C /* InterpolatedDEMGrid.cpp in Sources */,
 				CFE3DBA7164AFC4100910037 /* JSONBoolean.cpp in Sources */,
 				4435E3D919072EDA0064A7D7 /* Renderer.cpp in Sources */,
 				CFE3DBAC164AFDB000910037 /* JSONString.cpp in Sources */,

@@ -21,6 +21,8 @@
 #include "DecimatedDEMGrid.hpp"
 #include "InterpolatedDEMGrid.hpp"
 #include "Projection.hpp"
+#include "BilinearInterpolator.hpp"
+#include "InterpolatedDEMGrid.hpp"
 
 
 const Vector3D DEMGridUtils::getMinMaxAverageElevations(const DEMGrid* grid) {
@@ -128,7 +130,18 @@ DEMGrid* DEMGridUtils::bestGridFor(DEMGrid*        grid,
   if (grid == NULL) {
     return NULL;
   }
-
+  
+  {
+#warning at work
+//  DEMGrid* subsetGrid = SubsetDEMGrid::create(grid, Sector::fromDegrees(-90, -180, 0, 180));
+//  return subsetGrid;
+    DEMGrid* interpolatedGrid = new InterpolatedDEMGrid(grid,
+                                                        sector,
+                                                        extent.asVector2I(),
+                                                        new BilinearInterpolator());
+    return interpolatedGrid;
+  }
+/*
   const Sector   gridSector = grid->getSector();
   const Vector2I gridExtent = grid->getExtent();
 
@@ -157,4 +170,5 @@ DEMGrid* DEMGridUtils::bestGridFor(DEMGrid*        grid,
     subsetGrid->_release(); // moved ownership to interpolatedGrid
     return interpolatedGrid;
   }
+ */
 }

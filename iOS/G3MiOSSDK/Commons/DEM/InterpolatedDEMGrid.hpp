@@ -2,44 +2,29 @@
 //  InterpolatedDEMGrid.hpp
 //  G3MiOSSDK
 //
-//  Created by Diego Gomez Deck on 11/18/16.
+//  Created by Jose Miguel SN on 10/04/2017.
 //
 //
 
 #ifndef InterpolatedDEMGrid_hpp
 #define InterpolatedDEMGrid_hpp
 
+#include <stdio.h>
+
 #include "DecoratorDEMGrid.hpp"
+#include "Interpolator.hpp"
 
-
-class InterpolatedDEMGrid : public DecoratorDEMGrid {
-private:
-  InterpolatedDEMGrid(const DEMGrid*  grid,
-                      const Sector&   sector,
-                      const Vector2I& extent);
-
-  static double getElevationAt(const DEMGrid* grid,
-                               double u,
-                               double v);
-
-  static double bilinearInterpolation(double valueSW,
-                                      double valueSE,
-                                      double valueNE,
-                                      double valueNW,
-                                      double u,
-                                      double v);
-
-  static double linearInterpolation(double from,
-                                    double to,
-                                    double alpha);
-
-
+class InterpolatedDEMGrid: public DecoratorDEMGrid{
+  Interpolator* _interpolator;
 public:
-  static InterpolatedDEMGrid* create(const DEMGrid*  grid,
-                                     const Vector2S& extent);
-
-  double getElevation(int x, int y) const;
+  InterpolatedDEMGrid(DEMGrid* grid,
+                      const Sector& sector,
+                      const Vector2I& extent,
+                      Interpolator* interpolator);
+  ~InterpolatedDEMGrid();
   
+#warning this class could have its own projection
+  double getElevation(int x, int y) const;
 };
 
-#endif
+#endif /* InterpolatedDEMGrid_hpp */
