@@ -23,7 +23,7 @@ DecoratorDEMGrid(grid->getBaseData(),sector,extent),
 _interpolator(interpolator),
 _projection(projection){
   if (!_grid->getSector().fullContains(sector)){
-    ILogger::instance()->logError("Error creating InterpolatedDEMGrid");
+    ILogger::instance()->logInfo("Creating InterpolatedDEMGrid with incomplete data.");
   }
 }
 

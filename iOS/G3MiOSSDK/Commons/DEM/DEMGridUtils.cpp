@@ -130,19 +130,8 @@ DEMGrid* DEMGridUtils::bestGridFor(DEMGrid*        grid,
   if (grid == NULL) {
     return NULL;
   }
-  
-  {
-#warning at work
-//  DEMGrid* subsetGrid = SubsetDEMGrid::create(grid, Sector::fromDegrees(-90, -180, 0, 180));
-//  return subsetGrid;
-    DEMGrid* interpolatedGrid = new InterpolatedDEMGrid(grid,
-                                                        sector,
-                                                        extent.asVector2I(),
-                                                        grid->getProjection(),
-                                                        new BilinearInterpolator());
-    return interpolatedGrid;
-  }
-/*
+
+
   const Sector   gridSector = grid->getSector();
   const Vector2I gridExtent = grid->getExtent();
 
@@ -155,7 +144,16 @@ DEMGrid* DEMGridUtils::bestGridFor(DEMGrid*        grid,
   if (!gridSector.touchesWith(sector)) {
     return NULL;
   }
-
+  
+  
+  DEMGrid* interpolatedGrid = new InterpolatedDEMGrid(grid,
+                                                      sector,
+                                                      extent.asVector2I(),
+                                                      grid->getProjection(), //Using same projection for interpolation
+                                                      new BilinearInterpolator());
+  return interpolatedGrid;
+  
+/*
   DEMGrid* subsetGrid = SubsetDEMGrid::create(grid, sector);
   const Vector2I subsetGridExtent = subsetGrid->getExtent();
   if (subsetGridExtent.isEquals(extent)) {

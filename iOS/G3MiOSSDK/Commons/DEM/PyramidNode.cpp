@@ -84,8 +84,7 @@ bool PyramidNode::insertGrid(int z,
   else if (z == _z) {
     if ((x == _x) && (y == _y)) {
       _grid = grid;
-#warning AT WORK
-      //Avisar a tus subscribers y a sus hijos
+      notifySubtreeSubscriptors(grid);
       
 //      _stickyGrid = stickyGrid;
       return true;
@@ -166,4 +165,19 @@ void PyramidNode::removeSubscription(DEMSubscription* subscription) {
     }
   }
 
+}
+
+void PyramidNode::notifySubtreeSubscriptors(DEMGrid* grid){
+  if (_subscriptions != NULL){
+    const size_t subscriptionsSize = _subscriptions->size();
+    for (size_t i = 0; i < subscriptionsSize; i++) {
+      _subscriptions->at(i)->onGrid(grid);
+    }
+  }
+  
+  if (_children != NULL){
+    for (size_t i = 0; i < _childrenSize; i++) {
+      _children->at(i)->notifySubtreeSubscriptors(grid);
+    }
+  }
 }

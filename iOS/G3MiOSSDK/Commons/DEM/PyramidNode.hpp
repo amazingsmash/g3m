@@ -62,6 +62,8 @@ public:
 
   void removeSubscription(DEMSubscription* subscription);
   
+  void notifySubtreeSubscriptors(DEMGrid* grid);
+  
 };
 
 #endif
