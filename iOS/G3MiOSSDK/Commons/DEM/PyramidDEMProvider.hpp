@@ -49,7 +49,7 @@ public:
   public final Vector2S _tileExtent;
 #endif
 
-  virtual PyramidNode* createNode(const PyramidNode*  parent,
+  virtual PyramidNode* createNode(PyramidNode*  parent,
                                   const size_t childID) = 0;
 
   DEMSubscription* subscribe(const Sector&   sector,

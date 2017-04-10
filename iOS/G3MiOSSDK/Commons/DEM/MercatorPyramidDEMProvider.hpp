@@ -21,7 +21,7 @@ protected:
 
 public:
 
-  PyramidNode* createNode(const PyramidNode* parent,
+  PyramidNode* createNode(PyramidNode* parent,
                           const size_t childID);
 
 };

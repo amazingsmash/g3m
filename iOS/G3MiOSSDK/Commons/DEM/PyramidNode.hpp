@@ -27,7 +27,7 @@ private:
   std::vector<PyramidNode*>* _children;
   size_t                     _childrenSize;
 
-//  const PyramidNode*  _parent;
+  PyramidNode*  _parent;
 //  const size_t        _childID;
   PyramidDEMProvider* _pyramidDEMProvider;
 
@@ -41,7 +41,7 @@ public:
   const int    _x;
   const int    _y;
 
-  PyramidNode(const PyramidNode*  parent,
+  PyramidNode(PyramidNode*  parent,
               const size_t        childID,
               const Sector&       sector,
               const int           z,
@@ -62,7 +62,9 @@ public:
 
   void removeSubscription(DEMSubscription* subscription);
   
-  void notifySubtreeSubscriptors(DEMGrid* grid);
+  void notifySubtreeSubscriptors(DEMGrid* grid) const;
+  
+  void pruneChildrenIfPossible();
   
 };
 

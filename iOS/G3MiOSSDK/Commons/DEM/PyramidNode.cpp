@@ -15,14 +15,14 @@
 #include "DEMGridUtils.hpp"
 
 
-PyramidNode::PyramidNode(const PyramidNode*  parent,
+PyramidNode::PyramidNode(PyramidNode*  parent,
                          const size_t        childID,
                          const Sector&       sector,
                          const int           z,
                          const int           x,
                          const int           y,
                          PyramidDEMProvider* pyramidDEMProvider) :
-//_parent(parent),
+_parent(parent),
 //_childID(childID),
 _sector(sector),
 _resolution(sector._deltaLatitude.div(pyramidDEMProvider->_tileExtent._y),
@@ -153,8 +153,7 @@ void PyramidNode::removeSubscription(DEMSubscription* subscription) {
     if (_subscriptions->empty()) {
       delete _subscriptions;
       _subscriptions = NULL;
-#warning AT WORK
-       //meter aqui: avisar al padre para que te borre si tu y tus hermanos están vacios _sticky??
+      
     }
   }
 
@@ -164,10 +163,14 @@ void PyramidNode::removeSubscription(DEMSubscription* subscription) {
       child->removeSubscription(subscription);
     }
   }
-
+  
+  if (_subscriptions == NULL){
+    //meter aqui: avisar al padre para que te borre si tu y tus hermanos están vacios _sticky??
+    _parent->pruneChildrenIfPossible();
+  }
 }
 
-void PyramidNode::notifySubtreeSubscriptors(DEMGrid* grid){
+void PyramidNode::notifySubtreeSubscriptors(DEMGrid* grid) const{
   if (_subscriptions != NULL){
     const size_t subscriptionsSize = _subscriptions->size();
     for (size_t i = 0; i < subscriptionsSize; i++) {
@@ -179,5 +182,21 @@ void PyramidNode::notifySubtreeSubscriptors(DEMGrid* grid){
     for (size_t i = 0; i < _childrenSize; i++) {
       _children->at(i)->notifySubtreeSubscriptors(grid);
     }
+  }
+}
+
+void PyramidNode::pruneChildrenIfPossible(){
+  if (_children != NULL){
+    for (size_t i = 0; i < _childrenSize; i++) {
+      if (!_children->at(i)->_subscriptions->empty()){
+        return;
+      }
+    }
+    
+    for (size_t i = 0; i < _childrenSize; i++) {
+      delete _children->at(i);
+    }
+    delete _children;
+    _children = NULL;
   }
 }

@@ -27,7 +27,7 @@ MercatorPyramidDEMProvider::~MercatorPyramidDEMProvider() {
 #endif
 }
 
-PyramidNode* MercatorPyramidDEMProvider::createNode(const PyramidNode* parent,
+PyramidNode* MercatorPyramidDEMProvider::createNode(PyramidNode* parent,
                                                     const size_t childID) {
   if (parent == NULL) {
     // creating root node
