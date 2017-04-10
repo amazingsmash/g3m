@@ -17,8 +17,11 @@
 InterpolatedDEMGrid::InterpolatedDEMGrid(DEMGrid* grid,
                                          const Sector& sector,
                                          const Vector2I& extent,
-                                         Interpolator* interpolator):
-DecoratorDEMGrid(grid,sector,extent),_interpolator(interpolator){
+                                         const Projection* projection,
+                                         const Interpolator* interpolator):
+DecoratorDEMGrid(grid->getBaseData(),sector,extent),
+_interpolator(interpolator),
+_projection(projection){
   if (!_grid->getSector().fullContains(sector)){
     ILogger::instance()->logError("Error creating InterpolatedDEMGrid");
   }

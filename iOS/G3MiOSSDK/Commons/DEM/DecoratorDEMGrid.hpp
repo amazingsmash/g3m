@@ -26,7 +26,11 @@ protected:
 
 public:
 
-  const Projection* getProjection() const;
+  //const Projection* getProjection() const;
+  
+  virtual const DEMGrid* getBaseData() const{
+    return _grid;
+  }
   
 };
 

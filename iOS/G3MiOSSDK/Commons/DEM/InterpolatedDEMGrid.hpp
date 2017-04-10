@@ -15,16 +15,22 @@
 #include "Interpolator.hpp"
 
 class InterpolatedDEMGrid: public DecoratorDEMGrid{
-  Interpolator* _interpolator;
+  const Interpolator* _interpolator;
+  const Projection* _projection;
 public:
   InterpolatedDEMGrid(DEMGrid* grid,
                       const Sector& sector,
                       const Vector2I& extent,
-                      Interpolator* interpolator);
+                      const Projection* projection,
+                      const Interpolator* interpolator);
+  
   ~InterpolatedDEMGrid();
   
-#warning this class could have its own projection
   double getElevation(int x, int y) const;
+  
+  const Projection* getProjection() const{
+    return _projection;
+  }
 };
 
 #endif /* InterpolatedDEMGrid_hpp */

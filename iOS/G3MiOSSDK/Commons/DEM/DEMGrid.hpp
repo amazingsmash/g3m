@@ -47,6 +47,10 @@ public:
   
   Geodetic2D getInnerPoint(int x, int y) const;
   
+  virtual const DEMGrid* getBaseData() const{
+    return this;
+  }
+  
 };
 
 #endif

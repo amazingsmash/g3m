@@ -25,6 +25,6 @@ DecoratorDEMGrid::~DecoratorDEMGrid() {
 #endif
 }
 
-const Projection* DecoratorDEMGrid::getProjection() const {
-  return _grid->getProjection();
-}
+//const Projection* DecoratorDEMGrid::getProjection() const {
+//  return _grid->getProjection();
+//}

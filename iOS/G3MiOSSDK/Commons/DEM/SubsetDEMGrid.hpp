@@ -33,6 +33,10 @@ public:
                                const Sector&  sector);
 
   double getElevation(int x, int y) const;
+  
+  const Projection* getProjection() const{
+    return _grid->getProjection();
+  }
 
 };
 

@@ -138,6 +138,7 @@ DEMGrid* DEMGridUtils::bestGridFor(DEMGrid*        grid,
     DEMGrid* interpolatedGrid = new InterpolatedDEMGrid(grid,
                                                         sector,
                                                         extent.asVector2I(),
+                                                        grid->getProjection(),
                                                         new BilinearInterpolator());
     return interpolatedGrid;
   }

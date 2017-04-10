@@ -26,6 +26,10 @@ public:
                                   const Vector2S& extent);
 
   double getElevation(int x, int y) const;
+  
+  const Projection* getProjection() const{
+    return _grid->getProjection();
+  }
 
 };
 
