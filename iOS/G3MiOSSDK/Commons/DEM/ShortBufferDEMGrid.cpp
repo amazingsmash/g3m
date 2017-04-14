@@ -54,6 +54,12 @@ ShortBufferDEMGrid::~ShortBufferDEMGrid() {
 }
 
 double ShortBufferDEMGrid::getValueInBufferAt(int index) const {
+  
+  if (index >= _bufferSize || index < 0){
+    ILogger::instance()->logError("Index error on ShortBufferDEMGrid.");
+    return NAND;
+  }
+  
   const short value = _buffer[index];
   return (value == _noDataValue) ? NAND : value;
 }

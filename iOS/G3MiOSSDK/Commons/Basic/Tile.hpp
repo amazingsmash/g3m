@@ -82,7 +82,7 @@ private:
 
   int                    _elevationDataLevel;
   ElevationData*         _elevationData;
-  bool                   _mustActualizeMeshDueToNewElevationData;
+  bool                   _meshNeedsUpdate;
   DEMGrid*               _grid;
   ElevationDataProvider* _lastElevationDataProvider;
   int _lastTileMeshResolutionX;

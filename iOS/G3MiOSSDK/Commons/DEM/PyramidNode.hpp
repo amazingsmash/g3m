@@ -34,6 +34,7 @@ private:
   std::vector<DEMSubscription*>* _subscriptions;
 
   const Geodetic2D _resolution;
+  bool _dataRequestPending;
 
 public:
   const Sector _sector;
@@ -65,6 +66,8 @@ public:
   void notifySubtreeSubscriptors(DEMGrid* grid) const;
   
   void pruneChildrenIfPossible();
+  
+  bool subtreeHasSubscriptions() const;
   
 };
 

@@ -13,6 +13,8 @@
 #include "ErrorHandling.hpp"
 #include "MercatorUtils.hpp"
 #include "PyramidNode.hpp"
+#include "Vector2I.hpp"
+#include "IMathUtils.hpp"
 
 
 WebMercatorPyramidDEMProvider::WebMercatorPyramidDEMProvider(const double deltaHeight,
@@ -40,7 +42,7 @@ PyramidNode* WebMercatorPyramidDEMProvider::createNode(PyramidNode* parent,
 
   const int nextZ = parent->_z + 1;
   const int x2    = parent->_x * 2;
-  const int y2    = parent->_y * 2;
+  const int y2    = parent->_y * 2; 
 
   const Geodetic2D lower = parent->_sector._lower;
   const Geodetic2D upper = parent->_sector._upper;
@@ -78,4 +80,28 @@ PyramidNode* WebMercatorPyramidDEMProvider::createNode(PyramidNode* parent,
   else {
     THROW_EXCEPTION("Man, isn't it a QuadTree?");
   }
+}
+
+//Check out https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#X_and_Y
+
+int WebMercatorPyramidDEMProvider::getSectorLevel(const Sector& s){
+  int z = 0;
+  double lon = 360.0;
+  while (lon > s._deltaLongitude._degrees){
+    lon = lon / 2.0;
+    z++;
+  }
+  
+  return z;
+}
+
+Vector2I WebMercatorPyramidDEMProvider::getSectorXY(const Sector& s, int z){
+  
+  double zoomDLon = 360.0 / ( IMathUtils::instance()->pow(2.0, z));
+  double zoomDLat = 170.1022 / ( IMathUtils::instance()->pow(2.0, z));
+  
+  int x = (int)((s._lower._longitude._degrees + 180.0) / zoomDLon);
+  int y = (int)((90.0 - s._upper._latitude._degrees) / zoomDLat);
+  
+  return Vector2I(x,y);
 }

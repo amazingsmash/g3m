@@ -86,6 +86,8 @@ public:
   }
 
   bool touchesWith(const Sector& that) const;
+  
+  bool sharesAreaWith(const Sector &that) const;
 
   const Geodetic2D getSW() const {
     return _lower;

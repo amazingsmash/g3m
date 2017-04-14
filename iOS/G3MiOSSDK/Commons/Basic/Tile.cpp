@@ -85,7 +85,7 @@ _elevationDataLevel(-1),
 _elevationDataRequest(NULL),
 _grid(NULL),
 _demSubscription(NULL),
-_mustActualizeMeshDueToNewElevationData(false),
+_meshNeedsUpdate(false),
 _lastTileMeshResolutionX(-1),
 _lastTileMeshResolutionY(-1),
 _planetRenderer(planetRenderer),
@@ -214,8 +214,8 @@ Mesh* Tile::getTessellatorMesh(const G3MRenderContext* rc,
     }
   }
 
-  if ( (_tessellatorMesh == NULL) || _mustActualizeMeshDueToNewElevationData ) {
-    _mustActualizeMeshDueToNewElevationData = false;
+  if ( (_tessellatorMesh == NULL) || _meshNeedsUpdate ) {
+    _meshNeedsUpdate = false;
 
     _planetRenderer->onTileHasChangedMesh(this);
 
@@ -224,34 +224,24 @@ Mesh* Tile::getTessellatorMesh(const G3MRenderContext* rc,
       _debugMesh = NULL;
     }
 
-//    if (elevationDataProvider == NULL) {
-//      // no elevation data provider, just create a simple mesh without elevation
-//      _tessellatorMesh = prc->_tessellator->createTileMesh(rc,
-//                                                           prc,
-//                                                           this,
-//                                                           NULL,
-//                                                           _tileTessellatorMeshData);
-//    }
-//    else {
     Mesh* tessellatorMesh = prc->_tessellator->createTileMesh(rc,
                                                               prc,
                                                               this,
                                                               _elevationData,
                                                               _grid,
                                                               _tileTessellatorMeshData);
-
-    MeshHolder* meshHolder = (MeshHolder*) _tessellatorMesh;
-    if (meshHolder == NULL) {
-      meshHolder = new MeshHolder(tessellatorMesh);
-      _tessellatorMesh = meshHolder;
+    
+    if (_tessellatorMesh == NULL){
+      _tessellatorMesh = new MeshHolder(tessellatorMesh);
+    } else{
+      ((MeshHolder*)_tessellatorMesh)->setMesh(tessellatorMesh);
+      //printf("Changing Mesh of tile %s -> DEM: %s\n", _id.c_str(), _grid->getBaseData()->getSector().description().c_str());
     }
-    else {
-      meshHolder->setMesh(tessellatorMesh);
-    }
-//    }
 
     //Notifying when the tile is first created and every time the elevation data changes
-    _planetRenderer->sectorElevationChanged(_elevationData);
+    if (_grid != NULL){
+      _planetRenderer->sectorElevationChanged(_elevationData);
+    }
   }
 
   return _tessellatorMesh;
@@ -603,7 +593,8 @@ void Tile::onGrid(DEMGrid* grid) {
       _grid->_release();
     }
     _grid = grid;
-    _mustActualizeMeshDueToNewElevationData = true;
+    _grid->_retain();
+    _meshNeedsUpdate = true;
   }
 }
 
@@ -616,7 +607,7 @@ void Tile::setElevationData(ElevationData* ed, int level) {
 
     _elevationData = ed;
     _elevationDataLevel = level;
-    _mustActualizeMeshDueToNewElevationData = true;
+    _meshNeedsUpdate = true;
 
     //If the elevation belongs to tile's level, we notify the sub-tree
     if (isElevationDataSolved()) {

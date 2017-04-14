@@ -78,6 +78,8 @@ public:
   void onDownloadError(int z,
                        int x,
                        int y);
+  
+  void requestDataFor(const PyramidNode* node);
 
 };
 

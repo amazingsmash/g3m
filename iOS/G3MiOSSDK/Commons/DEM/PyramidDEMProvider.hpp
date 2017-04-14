@@ -59,6 +59,8 @@ public:
 
   void unsubscribe(DEMSubscription* subscription);
   
+  virtual void requestDataFor(const PyramidNode* node) = 0;
+  
 };
 
 #endif

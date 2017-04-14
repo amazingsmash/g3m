@@ -33,7 +33,8 @@ _grid(NULL),
 //_stickyGrid(false),
 _children(NULL),
 _childrenSize(0),
-_subscriptions(NULL)
+_subscriptions(NULL),
+_dataRequestPending(false)
 {
 
 }
@@ -84,6 +85,7 @@ bool PyramidNode::insertGrid(int z,
   else if (z == _z) {
     if ((x == _x) && (y == _y)) {
       _grid = grid;
+      _dataRequestPending = false;
       notifySubtreeSubscriptors(grid);
       
 //      _stickyGrid = stickyGrid;
@@ -105,12 +107,18 @@ bool PyramidNode::insertGrid(int z,
 
 void PyramidNode::addSubscription(DEMGrid* grid,
                                   DEMSubscription* subscription) {
-  if (subscription->_sector.touchesWith(_sector)) {
+  //if (subscription->_sector.touchesWith(_sector)) {
+  if (subscription->_sector.sharesAreaWith(_sector)) {
+    
+    Sector intersection = subscription->_sector.intersection(_sector);
+    
+    
     DEMGrid* bestGrid = (_grid == NULL) ? grid : _grid;
 
     const bool notEnoughResolution = (_resolution._latitude.greaterThan ( subscription->_resolution._latitude  ) ||
                                       _resolution._longitude.greaterThan( subscription->_resolution._longitude ) );
-    if (notEnoughResolution) {
+    
+    if (notEnoughResolution) { //Passing subscriptor to child
       std::vector<PyramidNode*>* children = getChildren();
       for (size_t i = 0; i < _childrenSize; i++) {
         PyramidNode* child = children->at(i);
@@ -129,6 +137,11 @@ void PyramidNode::addSubscription(DEMGrid* grid,
                                                           subscription->_extent);
         if (selectedGrid != NULL) {
           subscription->onGrid(selectedGrid);
+        }
+        
+        if (_grid == NULL && !_dataRequestPending){ //There's no data for this node yet
+          _pyramidDEMProvider->requestDataFor(this);
+          _dataRequestPending = true;
         }
       }
     }
@@ -165,7 +178,6 @@ void PyramidNode::removeSubscription(DEMSubscription* subscription) {
   }
   
   if (_subscriptions == NULL){
-    //meter aqui: avisar al padre para que te borre si tu y tus hermanos están vacios _sticky??
     _parent->pruneChildrenIfPossible();
   }
 }
@@ -174,7 +186,15 @@ void PyramidNode::notifySubtreeSubscriptors(DEMGrid* grid) const{
   if (_subscriptions != NULL){
     const size_t subscriptionsSize = _subscriptions->size();
     for (size_t i = 0; i < subscriptionsSize; i++) {
-      _subscriptions->at(i)->onGrid(grid);
+      
+      //Geenerated best grid response for each subscription
+      DEMSubscription* subscription = _subscriptions->at(i);
+      DEMGrid* selectedGrid = DEMGridUtils::bestGridFor(grid,
+                                                        subscription->_sector,
+                                                        subscription->_extent);
+      if (selectedGrid != NULL) {
+        subscription->onGrid(selectedGrid);
+      }
     }
   }
   
@@ -185,10 +205,25 @@ void PyramidNode::notifySubtreeSubscriptors(DEMGrid* grid) const{
   }
 }
 
+bool PyramidNode::subtreeHasSubscriptions() const{
+  if (_subscriptions != NULL && !_subscriptions->empty()){
+    return true;
+  } else{
+    if (_children != NULL){
+      for (size_t i = 0; i < _childrenSize; i++) {
+        if (_children->at(i)->subtreeHasSubscriptions()){
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
 void PyramidNode::pruneChildrenIfPossible(){
   if (_children != NULL){
     for (size_t i = 0; i < _childrenSize; i++) {
-      if (!_children->at(i)->_subscriptions->empty()){
+      if (_children->at(i)->subtreeHasSubscriptions()){
         return;
       }
     }
@@ -198,5 +233,6 @@ void PyramidNode::pruneChildrenIfPossible(){
     }
     delete _children;
     _children = NULL;
+    _childrenSize = 0;
   }
 }

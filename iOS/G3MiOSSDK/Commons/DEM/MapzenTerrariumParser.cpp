@@ -64,11 +64,16 @@ FloatBufferDEMGrid* MapzenTerrariumParser::parse(const IImage* image,
 
   const int width  = image->getWidth();
   const int height = image->getHeight();
+  
 
   const int bufferSize = width * height;
+  
+//  if (bufferSize != 256*256){
+//    printf("lol");
+//  }
 
   float* buffer = new float[bufferSize];
-
+//  printf("Parsing PNG\n");
   for (int x = 0; x < width; x++) {
     for (int y = 0; y < height; y++) {
       image->getPixel(x, y, pixel);
@@ -79,11 +84,16 @@ FloatBufferDEMGrid* MapzenTerrariumParser::parse(const IImage* image,
       
       const float elevation = ((r * 256.0f) + g + (b / 256.0f)) - 32768.0f;
       const int index = ((height-1-y) * width) + x;
+      
+//      if (index >= bufferSize){
+//        printf("lol");
+//      }
+      
       buffer[index] = elevation;
     }
   }
-
   delete image;
+//  printf("PNG parsed\n");
 
   return new FloatBufferDEMGrid(WebMercatorProjection::instance(),
                                 sector,

@@ -21,9 +21,10 @@ InterpolatedDEMGrid::InterpolatedDEMGrid(DEMGrid* grid,
                                          const Interpolator* interpolator):
 DecoratorDEMGrid(grid->getBaseData(),sector,extent),
 _interpolator(interpolator),
-_projection(projection){
+_projection(projection)
+{
   if (!_grid->getSector().fullContains(sector)){
-    ILogger::instance()->logInfo("Creating InterpolatedDEMGrid with incomplete data.");
+    ILogger::instance()->logInfo("Creating InterpolatedDEMGrid with incomplete data. Base Grid: %s. Interpolated Grid: %s", grid->getBaseData()->getSector().description().c_str(), sector.description().c_str());
   }
 }
 

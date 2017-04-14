@@ -17,6 +17,7 @@
 #include "Sector.hpp"
 #include "ErrorHandling.hpp"
 #include "FloatBufferDEMGrid.hpp"
+#include "PyramidNode.hpp"
 
 
 int MapzenDEMProvider::_instanceCounter = 0;
@@ -66,6 +67,8 @@ class MapzenDEMProvider_ImageDownloadListener : public IImageDownloadListener {
   const double _deltaHeight;
 
 public:
+  
+#warning the listener should have a reference to the node????
   MapzenDEMProvider_ImageDownloadListener(const G3MContext* context,
                                           MapzenDEMProvider* provider,
                                           int z,
@@ -92,6 +95,9 @@ public:
   void onDownload(const URL& url,
                   IImage* image,
                   bool expired) {
+    
+    printf("MAPZEN DOWNLOAD: %s\n", url._path.c_str());
+    
     MapzenTerrariumParser::parse(_context,
                                  image,
                                  _sector,
@@ -161,6 +167,9 @@ void MapzenDEMProvider::requestTile(int z,
 
   const IStringUtils* su = IStringUtils::instance();
   const std::string path = "https://tile.mapzen.com/mapzen/terrain/v1/terrarium/" + su->toString(z) + "/" + su->toString(x) + "/" + su->toString(y) + ".png?api_key=" + _apiKey;
+  
+  
+  //printf("MAPZEN REQUESTED: %s\n", path.c_str());
 
   downloader->requestImage(URL(path),
                            _downloadPriority,
@@ -204,6 +213,8 @@ void MapzenDEMProvider::onGrid(int z,
              grid, stickyGrid);
 }
 
+//https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#X_and_Y
+
 void MapzenDEMProvider::onDownloadError(int z,
                                         int x,
                                         int y) {
@@ -211,4 +222,15 @@ void MapzenDEMProvider::onDownloadError(int z,
   if ((z == 0) && (x == 0) && (y == 0)) {
     _errorDownloadingRootGrid = true;
   }
+}
+
+void MapzenDEMProvider::requestDataFor(const PyramidNode* node){
+  const int z = getSectorLevel(node->_sector);
+  const Vector2I xy = getSectorXY(node->_sector,z);
+  
+  if (z < 0 || z > 19 || xy._x < 0 || xy._y < 0){
+    ILogger::instance()->logError("Web Mercator indices problem.");
+  }
+  
+  requestTile(z, xy._x, xy._y, node->_sector);
 }

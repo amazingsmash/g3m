@@ -10,6 +10,7 @@
 #define __G3MiOSSDK__MeshHolder__
 
 #include "Mesh.hpp"
+#include <stdio.h>
 
 
 class MeshHolder : public Mesh {
@@ -25,6 +26,7 @@ public:
 
   void setMesh(Mesh* mesh) {
     if (_mesh != mesh) {
+      //printf("Deleting mesh %x\n", _mesh);
       delete _mesh;
       _mesh = mesh;
     }

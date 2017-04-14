@@ -96,6 +96,23 @@ bool Sector::touchesWith(const Sector &that) const {
   return true;
 }
 
+bool Sector::sharesAreaWith(const Sector &that) const {
+  // Equivalent to touchesWith() but coalescent sectors without common area return false
+  
+  // Exit with no intersection if separated along an axis
+  if ((_upper._latitude._radians <= that._lower._latitude._radians) ||
+      (_lower._latitude._radians >= that._upper._latitude._radians)) {
+    return false;
+  }
+  if ((_upper._longitude._radians <= that._lower._longitude._radians) ||
+      (_lower._longitude._radians >= that._upper._longitude._radians)) {
+    return false;
+  }
+  
+  // Overlapping on all axes means Sectors are intersecting
+  return true;
+}
+
 // (u,v) are similar to texture coordinates inside the Sector
 // (u,v)=(0,0) in NW point, and (1,1) in SE point
 const Geodetic2D Sector::getInnerPoint(double u, double v) const {
