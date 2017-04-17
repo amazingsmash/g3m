@@ -1,4 +1,4 @@
- //
+//
 //  PyramidNode.cpp
 //  G3MiOSSDK
 //
@@ -14,6 +14,9 @@
 #include "DEMSubscription.hpp"
 #include "DEMGridUtils.hpp"
 #include "ILogger.hpp"
+
+//#warning TODO: REMOVE
+//static int NPYRAMIDNODES = 0;
 
 
 PyramidNode::PyramidNode(PyramidNode*  parent,
@@ -35,16 +38,18 @@ _grid(NULL),
 _children(NULL),
 _childrenSize(0),
 _subscriptions(NULL),
-_dataRequestPending(false)
+_dataRequestPending(false),
+_dataRequestID(-1)
 {
-
+//  NPYRAMIDNODES++;
+//  printf("N Pyramid Nodes = %d\n", NPYRAMIDNODES);
 }
 
 PyramidNode::~PyramidNode() {
   if (_grid != NULL) {
     _grid->_release();
   }
-
+  
   if (_children != NULL) {
     for (size_t i = 0; i < _childrenSize; i++) {
       PyramidNode* child = _children->at(i);
@@ -52,7 +57,7 @@ PyramidNode::~PyramidNode() {
     }
     delete _children;
   }
-
+  
   if (_subscriptions != NULL) {
     const size_t subscriptionsSize = _subscriptions->size();
     for (size_t i = 0; i < subscriptionsSize; i++) {
@@ -61,6 +66,13 @@ PyramidNode::~PyramidNode() {
     }
     delete _subscriptions;
   }
+  
+  if (_dataRequestPending && _pyramidDEMProvider != NULL){
+    _pyramidDEMProvider->cancelDataRequest(_dataRequestID);
+  }
+  
+//  NPYRAMIDNODES--;
+//  printf("N Pyramid Nodes = %d\n", NPYRAMIDNODES);
 }
 
 std::vector<PyramidNode*>* PyramidNode::getChildren() {
@@ -100,33 +112,42 @@ bool PyramidNode::insertGrid(int z,
       _dataRequestPending = false;
       notifySubtreeSubscriptors(grid);
       
-//      _stickyGrid = stickyGrid;
+      _stickyGrid = stickyGrid;
       return true;
     }
     return false;
   }
-
-  std::vector<PyramidNode*>* children = getChildren();
-  for (size_t i = 0; i < _childrenSize; i++) {
-    PyramidNode* child = children->at(i);
-    if (child->insertGrid(z, x, y,
-                          grid, stickyGrid)) {
-      return true;
+  
+  //If grid is sticky (forced) children must be created
+  //Otherwise do not store grids that don't have subscribers
+  std::vector<PyramidNode*>* children = stickyGrid? getChildren() : _children;
+  if (children != NULL){
+    for (size_t i = 0; i < _childrenSize; i++) {
+      PyramidNode* child = children->at(i);
+      if (child->insertGrid(z, x, y,
+                            grid, stickyGrid)) {
+        return true;
+      }
     }
   }
+  
+  
+  
   return false;
 }
 
-void PyramidNode::addSubscription(DEMGrid* grid,
+bool PyramidNode::addSubscription(DEMGrid* grid,
                                   DEMSubscription* subscription) {
+  const bool gridBelongsToSubTree = subscription->_sector.sharesAreaWith(_sector);
+  
   //if (subscription->_sector.touchesWith(_sector)) {
-  if (subscription->_sector.sharesAreaWith(_sector)) {
+  if (gridBelongsToSubTree) {
     
     Sector intersection = subscription->_sector.intersection(_sector);
     
     
     DEMGrid* bestGrid = (_grid == NULL) ? grid : _grid;
-
+    
     const bool notEnoughResolution = (_resolution._latitude.greaterThan ( subscription->_resolution._latitude  ) ||
                                       _resolution._longitude.greaterThan( subscription->_resolution._longitude ) );
     
@@ -134,8 +155,11 @@ void PyramidNode::addSubscription(DEMGrid* grid,
       std::vector<PyramidNode*>* children = getChildren();
       for (size_t i = 0; i < _childrenSize; i++) {
         PyramidNode* child = children->at(i);
-        child->addSubscription(bestGrid, subscription);
+        if (child->addSubscription(bestGrid, subscription)){
+          return true;
+        }
       }
+      ILogger::instance()->logError("PyramidNode::addSubscription logic error.");
     }
     else {
       if (_subscriptions == NULL) {
@@ -149,15 +173,19 @@ void PyramidNode::addSubscription(DEMGrid* grid,
                                                           subscription->_extent);
         if (selectedGrid != NULL) {
           subscription->onGrid(selectedGrid);
+        } else{
+          ILogger::instance()->logWarning("No GRID returned after subscription.");
         }
         
         if (_grid == NULL && !_dataRequestPending){ //There's no data for this node yet
-          _pyramidDEMProvider->requestDataFor(this);
           _dataRequestPending = true;
+          _dataRequestID = _pyramidDEMProvider->requestDataFor(this);
         }
       }
     }
   }
+  
+  return gridBelongsToSubTree;
 }
 
 void PyramidNode::removeSubscription(DEMSubscription* subscription) {
@@ -181,7 +209,7 @@ void PyramidNode::removeSubscription(DEMSubscription* subscription) {
       
     }
   }
-
+  
   if (_children != NULL) {
     for (size_t i = 0; i < _childrenSize; i++) {
       PyramidNode* child = _children->at(i);
@@ -189,7 +217,7 @@ void PyramidNode::removeSubscription(DEMSubscription* subscription) {
     }
   }
   
-  if (_subscriptions == NULL){
+  if (_subscriptions == NULL && _parent != NULL){
     _parent->pruneChildrenIfPossible();
   }
 }
@@ -235,7 +263,7 @@ bool PyramidNode::subtreeHasSubscriptions() const{
 void PyramidNode::pruneChildrenIfPossible(){
   if (_children != NULL){
     for (size_t i = 0; i < _childrenSize; i++) {
-      if (_children->at(i)->subtreeHasSubscriptions()){
+      if (_children->at(i)->subtreeHasSubscriptions() || _children->at(i)->_stickyGrid){
         return;
       }
     }
@@ -246,5 +274,15 @@ void PyramidNode::pruneChildrenIfPossible(){
     delete _children;
     _children = NULL;
     _childrenSize = 0;
+  }
+}
+
+void PyramidNode::onDEMProviderRemoved(){
+  _pyramidDEMProvider = NULL;
+  
+  if (_children != NULL){
+    for (size_t i = 0; i < _childrenSize; i++) {
+      _children->at(i)->onDEMProviderRemoved();
+    }
   }
 }

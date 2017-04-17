@@ -22,7 +22,7 @@ private:
   std::vector<PyramidNode*>* getChildren();
 
   DEMGrid* _grid;
-//  bool _stickyGrid;
+  bool _stickyGrid;
 
   std::vector<PyramidNode*>* _children;
   size_t                     _childrenSize;
@@ -35,6 +35,7 @@ private:
 
   const Geodetic2D _resolution;
   bool _dataRequestPending;
+  long long _dataRequestID;
 
 public:
   const Sector _sector;
@@ -58,7 +59,7 @@ public:
                   DEMGrid* grid,
                   const bool stickyGrid);
 
-  void addSubscription(DEMGrid* grid,
+  bool addSubscription(DEMGrid* grid,
                        DEMSubscription* subscription);
 
   void removeSubscription(DEMSubscription* subscription);
@@ -68,6 +69,8 @@ public:
   void pruneChildrenIfPossible();
   
   bool subtreeHasSubscriptions() const;
+  
+  void onDEMProviderRemoved();
   
 };
 

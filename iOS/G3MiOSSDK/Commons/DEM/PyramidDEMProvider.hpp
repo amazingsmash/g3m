@@ -59,7 +59,8 @@ public:
 
   void unsubscribe(DEMSubscription* subscription);
   
-  virtual void requestDataFor(const PyramidNode* node) = 0;
+  virtual long long requestDataFor(const PyramidNode* node) = 0;
+  virtual void cancelDataRequest(long long requestID) = 0;
   
 };
 

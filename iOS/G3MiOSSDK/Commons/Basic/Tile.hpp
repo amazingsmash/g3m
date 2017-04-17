@@ -96,6 +96,10 @@ private:
 
   mutable TileData** _data;
   mutable size_t     _dataSize;
+  
+  void subscribeToDEMProvider(const G3MRenderContext* rc,
+                              const PlanetRenderContext* prc);
+  void unsubscribeToDEMProvider();
 
 
 

@@ -102,24 +102,24 @@ Mesh* PlanetTileTessellator::createTileMesh(const G3MRenderContext* rc,
                                             const ElevationData* elevationData,
                                             const DEMGrid* grid,
                                             TileTessellatorMeshData& tileTessellatorMeshData) const {
-#warning UNCOMMENT FOR GRID CLOUD
-  if (grid != NULL) {
-    const Vector3D minMaxAverageElevations = DEMGridUtils::getMinMaxAverageElevations(grid);
-    tileTessellatorMeshData._minHeight     = minMaxAverageElevations._x;
-    tileTessellatorMeshData._maxHeight     = minMaxAverageElevations._y;
-    // tileTessellatorMeshData._averageHeight = minMaxAverageElevations._z;
-    tileTessellatorMeshData._averageHeight = 0;
-    tileTessellatorMeshData._needsTexturizing = false;
-    
-    return DEMGridUtils::createDebugMesh(grid,
-                                         rc->getPlanet(),
-                                         prc->_verticalExaggeration,
-                                         Geodetic3D::zero(), // offset
-                                         -11000,             // minElevation
-                                         9000,               // maxElevation
-                                         15                  // pointSize
-                                         );
-  }
+//#warning UNCOMMENT FOR GRID CLOUD
+//  if (grid != NULL) {
+//    const Vector3D minMaxAverageElevations = DEMGridUtils::getMinMaxAverageElevations(grid);
+//    tileTessellatorMeshData._minHeight     = minMaxAverageElevations._x;
+//    tileTessellatorMeshData._maxHeight     = minMaxAverageElevations._y;
+//    // tileTessellatorMeshData._averageHeight = minMaxAverageElevations._z;
+//    tileTessellatorMeshData._averageHeight = 0;
+//    tileTessellatorMeshData._needsTexturizing = false;
+//    
+//    return DEMGridUtils::createDebugMesh(grid,
+//                                         rc->getPlanet(),
+//                                         prc->_verticalExaggeration,
+//                                         Geodetic3D::zero(), // offset
+//                                         -11000,             // minElevation
+//                                         9000,               // maxElevation
+//                                         15                  // pointSize
+//                                         );
+//  }
   
   const Sector tileSector = tile->_sector;
   const Sector meshSector = getRenderedSectorForTile(tile);
@@ -389,9 +389,6 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
   const int mry = grid->getExtent()._y;
   Sector sector = grid->getSector();
   
-#warning todo clean
-  //  bool interestingTile = grid->getSector().contains(Angle::fromDegrees(27.987907), Angle::fromDegrees(86.925090)); //Everest
-  
   for (int j = mry-1; j > -1; j--) { //Moving on lat
     
     for (int i = 0; i < mrx; i++) { //Moving on lon
@@ -400,10 +397,6 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
       verticesArray.push_back(new Geodetic2D(position));
       
       const double rawElevation = grid->getElevation(i, j);
-      
-      //      if (interestingTile){
-      //        printf("%s -> %f\n", position.description().c_str(), rawElevation);
-      //      }
       
       double elevation = ISNAN(rawElevation)? 0 : rawElevation * verticalExaggeration;
       
@@ -431,10 +424,6 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
   tileTessellatorMeshData._minHeight = minElevation;
   tileTessellatorMeshData._maxHeight = maxElevation;
   tileTessellatorMeshData._averageHeight = sumElevation / (mrx * mry);
-  
-  //  if (interestingTile){
-  //    printf("Min %f, Max %f, Mean %f", minElevation, maxElevation, sumElevation / (mrx * mry));
-  //  }
   
   return minElevation;
   
@@ -573,7 +562,7 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
                                                                tileTessellatorMeshData,
                                                                verticesArray);
   
-#warning turn this into parameter
+#warning TODO: turn this into parameter
   Projection* textureProjection;
   if (mercator){
     textureProjection = WebMercatorProjection::instance();
@@ -625,57 +614,6 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
                                   textCoords);
   
   createSurfaceIndices(meshResolution, indices);
-  
-  
-  //  //TEX COORDINATES
-  //
-  //  if (mercator) {
-  //    const double mercatorLowerGlobalV = MercatorUtils::getMercatorV(tileSector._lower._latitude);
-  //    const double mercatorUpperGlobalV = MercatorUtils::getMercatorV(tileSector._upper._latitude);
-  //    const double mercatorDeltaGlobalV = mercatorLowerGlobalV - mercatorUpperGlobalV;
-  //
-  //    for (int j = 0; j < meshResolution._y; j++) {
-  //      const double v = (double) j / (meshResolution._y - 1);
-  //
-  //      for (int i = 0; i < meshResolution._x; i++) {
-  //        const double u = (double) i / (meshResolution._x - 1);
-  //
-  //        const Angle lat = Angle::linearInterpolation( meshSector._lower._latitude,  meshSector._upper._latitude,  1.0 - v );
-  //        const Angle lon = Angle::linearInterpolation( meshSector._lower._longitude, meshSector._upper._longitude,       u );
-  //
-  //        //U
-  //        const double m_u = tileSector.getUCoordinate(lon);
-  //
-  //        //V
-  //        const double mercatorGlobalV = MercatorUtils::getMercatorV(lat);
-  //        const double m_v = (mercatorGlobalV - mercatorUpperGlobalV) / mercatorDeltaGlobalV;
-  //
-  //        textCoords.add((float)m_u, (float)m_v);
-  //      }
-  //    }
-  //  }
-  //  else {
-  //    for (int j = 0; j < meshResolution._y; j++) {
-  //      const double v = (double) j / (meshResolution._y - 1);
-  //      for (int i = 0; i < meshResolution._x; i++) {
-  //        const double u = (double) i / (meshResolution._x - 1);
-  //        textCoords.add((float)u, (float)v);
-  //      }
-  //    }
-  //  }
-  
-  //  //INDEX
-  //  for (short j = 0; j < (meshResolution._y-1); j++) {
-  //    const short jTimesResolution = (short)(j*meshResolution._x);
-  //    if (j > 0) {
-  //      indices.add(jTimesResolution);
-  //    }
-  //    for (short i = 0; i < meshResolution._x; i++) {
-  //      indices.add((short)(jTimesResolution + i));
-  //      indices.add((short)(jTimesResolution + i + meshResolution._x));
-  //    }
-  //    indices.add((short)(jTimesResolution + 2*meshResolution._x - 1));
-  //  }
   
   return minElevation;
 }

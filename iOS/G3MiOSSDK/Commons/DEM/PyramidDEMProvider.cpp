@@ -11,6 +11,8 @@
 #include "ErrorHandling.hpp"
 #include "PyramidNode.hpp"
 #include "DEMSubscription.hpp"
+#include "ILogger.hpp"
+#include "DEMGrid.hpp"
 
 
 PyramidDEMProvider::PyramidDEMProvider(const double    deltaHeight,
@@ -36,8 +38,10 @@ std::vector<PyramidNode*>* PyramidDEMProvider::getRootNodes() {
 
 PyramidDEMProvider::~PyramidDEMProvider() {
   if (_rootNodes != NULL) {
+    
     for (size_t i = 0; i < _rootNodesCount; i++) {
       PyramidNode* rootNode = _rootNodes->at(i);
+      rootNode->onDEMProviderRemoved();
       delete rootNode;
     }
     delete _rootNodes;
@@ -60,7 +64,9 @@ void PyramidDEMProvider::insertGrid(int z,
       return;
     }
   }
-  THROW_EXCEPTION("can't insert grid");
+  //THROW_EXCEPTION("can't insert grid");
+  ILogger::instance()->logInfo("Grid not inserted in pyramid as it is no longer needed");
+  grid->_release();
 }
 
 DEMSubscription* PyramidDEMProvider::subscribe(const Sector&   sector,
@@ -76,17 +82,15 @@ DEMSubscription* PyramidDEMProvider::subscribe(const Sector&   sector,
   std::vector<PyramidNode*>* rootNodes = getRootNodes();
   for (size_t i = 0; i < _rootNodesCount; i++) {
     PyramidNode* rootNode = rootNodes->at(i);
-    rootNode->addSubscription(NULL, // grid
-                              subscription);
+    if (rootNode->addSubscription(NULL, // grid
+                                  subscription)){
+      return subscription;
+    }
   }
-
-//  const bool released = subscription->_release();
-//  if (released) {
-//    return NULL;
-//  }
-
-#warning TODO: fire event!
-  return subscription;
+  subscription->_release();
+  ILogger::instance()->logError("PyramidDEMProvider::subscribe logic error.");
+  return NULL;
+  
 }
 
 void PyramidDEMProvider::unsubscribe(DEMSubscription* subscription) {

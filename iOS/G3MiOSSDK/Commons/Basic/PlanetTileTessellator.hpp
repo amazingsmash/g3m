@@ -43,10 +43,6 @@ private:
   private Sector _renderedSector;
 #endif
   
-  Vector2S calculateResolution(const PlanetRenderContext* prc,
-                               const Tile* tile,
-                               const Sector& renderedSector) const;
-  
   bool needsEastSkirt(const Sector& tileSector) const {
     if (_renderedSector == NULL) {
       return true;
@@ -74,9 +70,6 @@ private:
     }
     return _renderedSector->_lower._latitude.lowerThan(tileSector._lower._latitude);
   }
-  
-  Sector getRenderedSectorForTile(const Tile* tile) const;
-  
   
   double createSurfaceVertices(const Vector2S& meshResolution, //Mesh resolution
                                const Sector& meshSector,
@@ -199,6 +192,13 @@ public:
       }
     }
   }
+  
+  Vector2S calculateResolution(const PlanetRenderContext* prc,
+                               const Tile* tile,
+                               const Sector& renderedSector) const;
+  
+  Sector getRenderedSectorForTile(const Tile* tile) const;
+  
 };
 
 #endif

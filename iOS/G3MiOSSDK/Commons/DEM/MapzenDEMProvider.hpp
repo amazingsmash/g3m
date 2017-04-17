@@ -48,7 +48,7 @@ private:
   bool _rootGridDownloaded;
   bool _errorDownloadingRootGrid;
 
-  void requestTile(int z,
+  long long requestTile(int z,
                    int x,
                    int y,
                    const Sector& sector);
@@ -79,7 +79,9 @@ public:
                        int x,
                        int y);
   
-  void requestDataFor(const PyramidNode* node);
+  long long requestDataFor(const PyramidNode* node);
+  
+  void cancelDataRequest(long long requestID);
 
 };
 

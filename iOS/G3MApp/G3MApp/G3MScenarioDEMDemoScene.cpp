@@ -14,6 +14,7 @@
 #include <G3MiOSSDK/LayerSet.hpp>
 #include <G3MiOSSDK/Geodetic3D.hpp>
 #include <G3MiOSSDK/Color.hpp>
+#include <G3MiOSSDK/MapzenDEMProvider.hpp>
 
 #include "G3MDemoModel.hpp"
 
@@ -32,12 +33,19 @@ void G3MScenarioDEMDemoScene::rawActivate(const G3MContext* context) {
 
   g3mWidget->setRenderedSector(demSector.shrinkedByPercent(0.2f));
 
-  const double deltaHeight = -700.905;
-  ElevationDataProvider* elevationDataProvider = new SingleBILElevationDataProvider(URL("file:///0576.bil"),
-                                                                                    demSector,
-                                                                                    Vector2I(2516, 1335),
-                                                                                    deltaHeight);
-  planetRenderer->setElevationDataProvider(elevationDataProvider, true);
+//  const double deltaHeight = -700.905;
+//  ElevationDataProvider* elevationDataProvider = new SingleBILElevationDataProvider(URL("file:///0576.bil"),
+//                                                                                    demSector,
+//                                                                                    Vector2I(2516, 1335),
+//                                                                                    deltaHeight);
+//  planetRenderer->setElevationDataProvider(elevationDataProvider, true);
+  
+#warning JM at work
+  planetRenderer->setDEMProvider( new MapzenDEMProvider("mapzen-ZB6FqMg",
+                                                        DownloadPriority::HIGHER,
+                                                        TimeInterval::fromDays(0),
+                                                        false, /* readExpired */
+                                                        0      /* deltaHeight */) );
 
 
   BingMapsLayer* layer = new BingMapsLayer(BingMapType::Aerial(),

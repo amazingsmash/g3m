@@ -25,7 +25,7 @@ public:
   PyramidNode* createNode(PyramidNode* parent,
                           const size_t childID);
   
-  virtual void requestDataFor(const PyramidNode* node) = 0;
+  virtual long long requestDataFor(const PyramidNode* node) = 0;
   
   int getSectorLevel(const Sector& s) const;
   Vector2I getSectorXY(const Sector& s, int z) const;
