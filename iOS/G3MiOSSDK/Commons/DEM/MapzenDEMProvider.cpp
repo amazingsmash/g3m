@@ -18,6 +18,7 @@
 #include "ErrorHandling.hpp"
 #include "FloatBufferDEMGrid.hpp"
 #include "PyramidNode.hpp"
+#include "Vector2D.hpp"
 
 
 int MapzenDEMProvider::_instanceCounter = 0;
@@ -225,12 +226,26 @@ void MapzenDEMProvider::onDownloadError(int z,
 }
 
 void MapzenDEMProvider::requestDataFor(const PyramidNode* node){
-  const int z = getSectorLevel(node->_sector);
-  const Vector2I xy = getSectorXY(node->_sector,z);
+//  const int z = getSectorLevel(node->_sector);
+//  const Vector2I xy = getSectorXY(node->_sector,z);
+//
+//  if (z < 0 || z > 19 || xy._x < 0 || xy._y < 0){
+//    ILogger::instance()->logError("Web Mercator indices problem.");
+//  }
+//  
+//  
+//  Geodetic2D nw = getNWCornerOfTile(xy._x, xy._y, z);
+//  Geodetic2D se = getNWCornerOfTile(xy._x+1, xy._y+1, z);
+//  if (!nw.isEquals(node->_sector.getNW()) || !se.isEquals(node->_sector.getSE())){
+//    
+//    ILogger::instance()->logError("Problem at MapzenDEMProvider tile coordinates. Distance: %f %f",
+//                                  nw.angularDistanceInDegrees(node->_sector.getNW()),
+//                                  se.angularDistanceInDegrees(node->_sector.getSE()));
+//  }
+//  
+//  
+//  
+//  requestTile(z, xy._x, xy._y, node->_sector);
   
-  if (z < 0 || z > 19 || xy._x < 0 || xy._y < 0){
-    ILogger::instance()->logError("Web Mercator indices problem.");
-  }
-  
-  requestTile(z, xy._x, xy._y, node->_sector);
+  requestTile(node->_z, node->_x, node->_y, node->_sector);
 }

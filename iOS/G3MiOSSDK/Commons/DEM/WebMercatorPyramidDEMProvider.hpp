@@ -10,6 +10,7 @@
 #define WebMercatorPyramidDEMProvider_hpp
 
 #include "PyramidDEMProvider.hpp"
+#include "Geodetic2D.hpp"
 
 class WebMercatorPyramidDEMProvider : public PyramidDEMProvider {
 protected:
@@ -26,8 +27,10 @@ public:
   
   virtual void requestDataFor(const PyramidNode* node) = 0;
   
-  int getSectorLevel(const Sector& s);
-  Vector2I getSectorXY(const Sector& s, int z);
+  int getSectorLevel(const Sector& s) const;
+  Vector2I getSectorXY(const Sector& s, int z) const;
+  
+  Geodetic2D getNWCornerOfTile(int x, int y, int z) const;
 
 };
 

@@ -84,7 +84,7 @@ PyramidNode* WebMercatorPyramidDEMProvider::createNode(PyramidNode* parent,
 
 //Check out https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#X_and_Y
 
-int WebMercatorPyramidDEMProvider::getSectorLevel(const Sector& s){
+int WebMercatorPyramidDEMProvider::getSectorLevel(const Sector& s) const{
   int z = 0;
   double lon = 360.0;
   while (lon > s._deltaLongitude._degrees){
@@ -95,13 +95,32 @@ int WebMercatorPyramidDEMProvider::getSectorLevel(const Sector& s){
   return z;
 }
 
-Vector2I WebMercatorPyramidDEMProvider::getSectorXY(const Sector& s, int z){
+Vector2I WebMercatorPyramidDEMProvider::getSectorXY(const Sector& s, int z) const{
   
-  double zoomDLon = 360.0 / ( IMathUtils::instance()->pow(2.0, z));
-  double zoomDLat = 170.1022 / ( IMathUtils::instance()->pow(2.0, z));
+//  double zoomDLon = 360.0 / ( IMathUtils::instance()->pow(2.0, z));
+//  double zoomDLat = 170.1022 / ( IMathUtils::instance()->pow(2.0, z));
+//  
+//  int x = (int)((s._lower._longitude._degrees + 180.0) / zoomDLon);
+//  int y = (int)((90.0 - s._upper._latitude._degrees) / zoomDLat);
+//  
+//  return Vector2I(x,y);
   
-  int x = (int)((s._lower._longitude._degrees + 180.0) / zoomDLon);
-  int y = (int)((90.0 - s._upper._latitude._degrees) / zoomDLat);
+  const IMathUtils* mu = IMathUtils::instance();
+  Geodetic2D m = s.getCenter();
   
-  return Vector2I(x,y);
+  double n = mu->pow(2.0, z);
+  int xtile = (int)mu->floor(n * ((m._longitude._degrees + 180.0) / 360));
+  int ytile = (int)mu->floor(n * (1.0 - (mu->log(tan(m._latitude._radians) + (1.0/mu->cos(m._latitude._radians))) / PI)) / 2.0);
+  return Vector2I(xtile,ytile);
+}
+
+
+
+Geodetic2D WebMercatorPyramidDEMProvider::getNWCornerOfTile(int x, int y, int z) const{
+  const IMathUtils* mu = IMathUtils::instance();
+  double n = mu->pow(2.0, z);
+  double lon_deg = x / n * 360.0 - 180.0;
+  double lat_rad = mu->atan(mu->sinh(PI * (1 - 2 * y / n)));
+  double lat_deg = TO_DEGREES(lat_rad);
+  return Geodetic2D::fromDegrees(lat_deg, lon_deg);
 }

@@ -58,7 +58,8 @@ public:
 
   virtual Mesh* createTileDebugMesh(const G3MRenderContext* rc,
                                     const PlanetRenderContext* prc,
-                                    const Tile* tile) const = 0;
+                                    const Tile* tile,
+                                    const DEMGrid* demGrid) const = 0;
 
   virtual IFloatBuffer* createTextCoords(const Vector2S& resolution,
                                          const Tile* tile) const = 0;

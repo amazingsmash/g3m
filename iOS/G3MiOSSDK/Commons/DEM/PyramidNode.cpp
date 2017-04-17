@@ -1,4 +1,4 @@
-//
+ //
 //  PyramidNode.cpp
 //  G3MiOSSDK
 //
@@ -13,6 +13,7 @@
 #include "ErrorHandling.hpp"
 #include "DEMSubscription.hpp"
 #include "DEMGridUtils.hpp"
+#include "ILogger.hpp"
 
 
 PyramidNode::PyramidNode(PyramidNode*  parent,
@@ -84,6 +85,17 @@ bool PyramidNode::insertGrid(int z,
   }
   else if (z == _z) {
     if ((x == _x) && (y == _y)) {
+      
+      if (!_sector.isEquals(grid->getSector())){
+        ILogger::instance()->logWarning("PyramidNode and Grid do not match exactly. %s != %s\n",
+                                        grid->getSector().description().c_str(),
+                                        _sector.description().c_str());
+      }
+      
+      if (_grid != NULL){
+        ILogger::instance()->logError("Storing a grid twice");
+      }
+      
       _grid = grid;
       _dataRequestPending = false;
       notifySubtreeSubscriptors(grid);

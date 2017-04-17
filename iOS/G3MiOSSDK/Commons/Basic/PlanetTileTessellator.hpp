@@ -177,7 +177,8 @@ public:
   
   Mesh* createTileDebugMesh(const G3MRenderContext* rc,
                             const PlanetRenderContext* prc,
-                            const Tile* tile) const;
+                            const Tile* tile,
+                            const DEMGrid* demGrid) const;
   
   IFloatBuffer* createTextCoords(const Vector2S& resolution,
                                  const Tile* tile) const;

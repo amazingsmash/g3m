@@ -250,7 +250,7 @@ Mesh* Tile::getTessellatorMesh(const G3MRenderContext* rc,
 Mesh* Tile::getDebugMesh(const G3MRenderContext* rc,
                          const PlanetRenderContext* prc) {
   if (_debugMesh == NULL) {
-    _debugMesh = prc->_tessellator->createTileDebugMesh(rc, prc, this);
+    _debugMesh = prc->_tessellator->createTileDebugMesh(rc, prc, this, _grid);
   }
   return _debugMesh;
 }
@@ -593,8 +593,10 @@ void Tile::onGrid(DEMGrid* grid) {
       _grid->_release();
     }
     _grid = grid;
-    _grid->_retain();
+    //_grid->_retain();
     _meshNeedsUpdate = true;
+  } else{
+    ILogger::instance()->logError("Passing the same Grid to Tile twice");
   }
 }
 

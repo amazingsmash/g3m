@@ -84,3 +84,9 @@ double Geodetic2D::bearingInDegrees(const Angle& fromLatitude,
                                      toLatitude,
                                      toLongitude));
 }
+
+double Geodetic2D::angularDistanceInDegrees(const Geodetic2D& that) const{
+  double x = _latitude.sub(that._latitude)._degrees;
+  double y = _longitude.sub(that._longitude)._degrees;
+  return x*x + y*y;
+}

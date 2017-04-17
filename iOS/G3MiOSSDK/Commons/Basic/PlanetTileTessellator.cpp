@@ -102,24 +102,24 @@ Mesh* PlanetTileTessellator::createTileMesh(const G3MRenderContext* rc,
                                             const ElevationData* elevationData,
                                             const DEMGrid* grid,
                                             TileTessellatorMeshData& tileTessellatorMeshData) const {
-//#warning UNCOMMENT FOR GRID CLOUD
-//  if (grid != NULL) {
-//    const Vector3D minMaxAverageElevations = DEMGridUtils::getMinMaxAverageElevations(grid);
-//    tileTessellatorMeshData._minHeight     = minMaxAverageElevations._x;
-//    tileTessellatorMeshData._maxHeight     = minMaxAverageElevations._y;
-//    // tileTessellatorMeshData._averageHeight = minMaxAverageElevations._z;
-//    tileTessellatorMeshData._averageHeight = 0;
-//    
-//    return DEMGridUtils::createDebugMesh(grid,
-//                                         rc->getPlanet(),
-//                                         prc->_verticalExaggeration,
-//                                         Geodetic3D::zero(), // offset
-//                                         -11000,             // minElevation
-//                                         9000,               // maxElevation
-//                                         15                  // pointSize
-//                                         );
-//  }
-
+#warning UNCOMMENT FOR GRID CLOUD
+  if (grid != NULL) {
+    const Vector3D minMaxAverageElevations = DEMGridUtils::getMinMaxAverageElevations(grid);
+    tileTessellatorMeshData._minHeight     = minMaxAverageElevations._x;
+    tileTessellatorMeshData._maxHeight     = minMaxAverageElevations._y;
+    // tileTessellatorMeshData._averageHeight = minMaxAverageElevations._z;
+    tileTessellatorMeshData._averageHeight = 0;
+    
+    return DEMGridUtils::createDebugMesh(grid,
+                                         rc->getPlanet(),
+                                         prc->_verticalExaggeration,
+                                         Geodetic3D::zero(), // offset
+                                         -11000,             // minElevation
+                                         9000,               // maxElevation
+                                         15                  // pointSize
+                                         );
+  }
+  
   const Sector tileSector = tile->_sector;
   const Sector meshSector = getRenderedSectorForTile(tile);
   const Vector2S meshResolution = calculateResolution(prc, tile, meshSector);
@@ -257,19 +257,33 @@ IFloatBuffer* PlanetTileTessellator::createTextCoords(const Vector2S& rawResolut
 
 Mesh* PlanetTileTessellator::createTileDebugMesh(const G3MRenderContext* rc,
                                                  const PlanetRenderContext* prc,
-                                                 const Tile* tile) const {
+                                                 const Tile* tile,
+                                                 const DEMGrid* demGrid) const {
   const Sector meshSector = getRenderedSectorForTile(tile);
   const Vector2S meshResolution = calculateResolution(prc, tile, meshSector);
   
   FloatBufferBuilderFromGeodetic* vertices = FloatBufferBuilderFromGeodetic::builderWithFirstVertexAsCenter(rc->getPlanet());
   TileTessellatorMeshData tileTessellatorMeshData;
-#warning NOT WORKING WITH DEMGRID
-  createSurfaceVertices(meshResolution,
-                        meshSector,
-                        tile->getElevationData(),
-                        prc->_verticalExaggeration,
-                        vertices,
-                        tileTessellatorMeshData);
+  
+  if (demGrid != NULL){
+    std::vector<Geodetic2D *> verticesArray;
+    createSurfaceVerticesFromDEMGrid(demGrid,
+                                     prc->_verticalExaggeration,
+                                     vertices,
+                                     tileTessellatorMeshData,
+                                     verticesArray);
+    for (size_t i = 0; i < verticesArray.size(); i++) {
+      delete verticesArray[i];
+    }
+    
+  } else{
+    createSurfaceVertices(meshResolution,
+                          meshSector,
+                          tile->getElevationData(),
+                          prc->_verticalExaggeration,
+                          vertices,
+                          tileTessellatorMeshData);
+  }
   
   //INDEX OF BORDER
   ShortBufferBuilder indicesBorder;
@@ -375,11 +389,7 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
   Sector sector = grid->getSector();
   
 #warning todo clean
-//  bool interestingTile = grid->getSector().contains(Angle::fromDegrees(27.987907), Angle::fromDegrees(86.925090)); //Everest
-  if (mrx != 32){
-    printf("Mesh Vert: %d x %d\n", mrx, mry);
-  }
-  
+  //  bool interestingTile = grid->getSector().contains(Angle::fromDegrees(27.987907), Angle::fromDegrees(86.925090)); //Everest
   
   for (int j = mry-1; j > -1; j--) { //Moving on lat
     
@@ -390,9 +400,9 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
       
       const double rawElevation = grid->getElevation(i, j);
       
-//      if (interestingTile){
-//        printf("%s -> %f\n", position.description().c_str(), rawElevation);
-//      }
+      //      if (interestingTile){
+      //        printf("%s -> %f\n", position.description().c_str(), rawElevation);
+      //      }
       
       double elevation = ISNAN(rawElevation)? 0 : rawElevation * verticalExaggeration;
       
@@ -421,9 +431,9 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
   tileTessellatorMeshData._maxHeight = maxElevation;
   tileTessellatorMeshData._averageHeight = sumElevation / (mrx * mry);
   
-//  if (interestingTile){
-//    printf("Min %f, Max %f, Mean %f", minElevation, maxElevation, sumElevation / (mrx * mry));
-//  }
+  //  if (interestingTile){
+  //    printf("Min %f, Max %f, Mean %f", minElevation, maxElevation, sumElevation / (mrx * mry));
+  //  }
   
   return minElevation;
   

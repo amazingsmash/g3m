@@ -213,6 +213,8 @@ public:
     return true;
   }
 #endif
+  
+  double angularDistanceInDegrees(const Geodetic2D& that) const;
 
 };
 
