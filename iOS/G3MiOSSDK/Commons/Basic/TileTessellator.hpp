@@ -29,11 +29,13 @@ public:
   double _minHeight;
   double _maxHeight;
   double _averageHeight;
+  bool   _needsTexturizing;
 
   TileTessellatorMeshData() :
   _minHeight(0),
   _maxHeight(0),
-  _averageHeight(0)
+  _averageHeight(0),
+  _needsTexturizing(true)
   {
 
   }

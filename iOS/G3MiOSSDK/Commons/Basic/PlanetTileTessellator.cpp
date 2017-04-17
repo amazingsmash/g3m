@@ -109,6 +109,7 @@ Mesh* PlanetTileTessellator::createTileMesh(const G3MRenderContext* rc,
     tileTessellatorMeshData._maxHeight     = minMaxAverageElevations._y;
     // tileTessellatorMeshData._averageHeight = minMaxAverageElevations._z;
     tileTessellatorMeshData._averageHeight = 0;
+    tileTessellatorMeshData._needsTexturizing = false;
     
     return DEMGridUtils::createDebugMesh(grid,
                                          rc->getPlanet(),

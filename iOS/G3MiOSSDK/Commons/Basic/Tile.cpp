@@ -264,7 +264,8 @@ void Tile::prepareForFullRendering(const G3MRenderContext*    rc,
   }
 
   if (prc->_texturizer != NULL) {
-    const bool needsToCallTexturizer = (_texturizedMesh == NULL) || isTexturizerDirty();
+    const bool needsToCallTexturizer = (_tileTessellatorMeshData._needsTexturizing &&
+                                        ((_texturizedMesh == NULL) || isTexturizerDirty()));
 
     if (needsToCallTexturizer) {
       _texturizedMesh = prc->_texturizer->texturize(rc,
@@ -293,7 +294,8 @@ void Tile::rawRender(const G3MRenderContext*    rc,
     tessellatorMesh->render(rc, glState);
   }
   else {
-    const bool needsToCallTexturizer = (_texturizedMesh == NULL) || isTexturizerDirty();
+    const bool needsToCallTexturizer = (_tileTessellatorMeshData._needsTexturizing &&
+                                        ((_texturizedMesh == NULL) || isTexturizerDirty()));
 
     if (needsToCallTexturizer) {
       _texturizedMesh = prc->_texturizer->texturize(rc,
@@ -424,7 +426,7 @@ void Tile::render(const G3MRenderContext*    rc,
     rendered = (
                 (toVisitInNextIteration == NULL)                           ||
                 prc->_tileLODTester->meetsRenderCriteria(rc, prc, this)    ||
-                (prc->_tilesRenderParameters->_incrementalTileQuality && !_textureSolved)
+                (prc->_tilesRenderParameters->_incrementalTileQuality && !isTextureSolved())
                 );
 
     if (rendered) {

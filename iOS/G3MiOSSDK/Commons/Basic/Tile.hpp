@@ -154,6 +154,9 @@ public:
   void setTextureSolved(bool textureSolved);
 
   bool isTextureSolved() const {
+    if (!_tileTessellatorMeshData._needsTexturizing){
+      return true;
+    }
     return _textureSolved;
   }
 
