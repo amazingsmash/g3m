@@ -389,6 +389,8 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
   const int mry = grid->getExtent()._y;
   Sector sector = grid->getSector();
   
+//  printf("--------------------------------------------------------\n");
+  
   for (int j = mry-1; j > -1; j--) { //Moving on lat
     
     for (int i = 0; i < mrx; i++) { //Moving on lon
@@ -397,6 +399,11 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
       verticesArray.push_back(new Geodetic2D(position));
       
       const double rawElevation = grid->getElevation(i, j);
+     
+//      if (rawElevation > 400.0){
+//        printf("%f\n", rawElevation);
+//        grid->getElevation(i, j);
+//      }
       
       double elevation = ISNAN(rawElevation)? 0 : rawElevation * verticalExaggeration;
       

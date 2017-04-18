@@ -53,10 +53,6 @@ double InterpolatedDEMGrid::getElevation(int x, int y) const{
   const double rx = gridX - (double)fx;
   const double ry = gridY - (double)fy;
   
-  if (rx == 0.0 && ry == 0.0){
-    return _grid->getElevation((int) uv._x, (int) uv._y);
-  }
-  
   const int fx1 = fx == ge._x-1? fx: fx+1;
   const int fy1 = fy == ge._y-1? fy: fy+1;
   
@@ -66,9 +62,6 @@ double InterpolatedDEMGrid::getElevation(int x, int y) const{
   const double valueSE = _grid->getElevation(fx1, fy1);
   
   double h = _interpolator->interpolation(valueSW, valueSE, valueNE, valueNW, rx, ry);
-  
-  //    printf("%s -> %d, %d -> %s (%f)\n", p.description().c_str(), fx, fy,
-  //           _grid->getInnerPoint(fx, fy).description().c_str(), h);
   
   return h;
 }

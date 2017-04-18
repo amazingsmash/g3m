@@ -424,9 +424,9 @@ void Tile::render(const G3MRenderContext*    rc,
                   TilesStatistics*           tilesStatistics,
                   std::vector<Tile*>*        toVisitInNextIteration) {
   
-  //  if (!_sector.contains(Angle::fromDegrees(27.987907), Angle::fromDegrees(86.925090))){ //Everest
-  //    return;
-  //  }
+//    if (!_sector.contains(Angle::fromDegrees(28.155408438414454508), Angle::fromDegrees(-15.628102664128034505))){ //Galdar
+//      return;
+//    }
   
   const bool visible = prc->_tileVisibilityTester->isVisible(rc, prc, this);
   bool rendered = false;

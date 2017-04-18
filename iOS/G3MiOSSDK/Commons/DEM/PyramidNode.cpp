@@ -106,6 +106,7 @@ bool PyramidNode::insertGrid(int z,
       
       if (_grid != NULL){
         ILogger::instance()->logError("Storing a grid twice.");
+        _grid->_release();
       }
       
       _grid = grid;
