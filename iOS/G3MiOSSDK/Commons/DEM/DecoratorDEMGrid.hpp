@@ -20,13 +20,12 @@ protected:
 
   DecoratorDEMGrid(const DEMGrid*  grid,
                    const Sector&   sector,
-                   const Vector2I& extent);
+                   const Vector2I& extent,
+                   const Projection* projection);
 
   virtual ~DecoratorDEMGrid();
 
 public:
-
-  //const Projection* getProjection() const;
   
   virtual const DEMGrid* getBaseData() const{
     return _grid;

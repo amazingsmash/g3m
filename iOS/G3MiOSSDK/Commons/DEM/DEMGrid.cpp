@@ -12,11 +12,13 @@
 
 
 DEMGrid::DEMGrid(const Sector&   sector,
-                 const Vector2I& extent) :
+                 const Vector2I& extent,
+                 const Projection* projection) :
 _sector(sector),
 _extent(extent),
 _resolution(sector._deltaLatitude.div(extent._y),
-            sector._deltaLongitude.div(extent._x))
+            sector._deltaLongitude.div(extent._x)),
+_projection(projection)
 {
 }
 
@@ -36,6 +38,10 @@ const Vector2I DEMGrid::getExtent() const {
 
 const Geodetic2D DEMGrid::getResolution() const {
   return _resolution;
+}
+
+const Projection* DEMGrid::getProjection() const{
+  return _projection;
 }
 
 Geodetic2D DEMGrid::getInnerPoint(int x, int y) const{

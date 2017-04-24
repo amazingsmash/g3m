@@ -11,8 +11,9 @@
 
 DecoratorDEMGrid::DecoratorDEMGrid(const DEMGrid*  grid,
                                    const Sector&   sector,
-                                   const Vector2I& extent) :
-DEMGrid(sector, extent),
+                                   const Vector2I& extent,
+                                   const Projection* projection) :
+DEMGrid(sector, extent, projection),
 _grid(grid)
 {
   _grid->_retain();
@@ -24,7 +25,3 @@ DecoratorDEMGrid::~DecoratorDEMGrid() {
   super.dispose();
 #endif
 }
-
-//const Projection* DecoratorDEMGrid::getProjection() const {
-//  return _grid->getProjection();
-//}

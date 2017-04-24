@@ -16,8 +16,7 @@ BufferDEMGrid::BufferDEMGrid(const Projection* projection,
                              const Vector2I& extent,
                              size_t bufferSize,
                              double deltaHeight) :
-DEMGrid(sector, extent),
-_projection(projection),
+DEMGrid(sector, extent, projection),
 _bufferSize(bufferSize),
 _deltaHeight(deltaHeight)
 {
@@ -29,10 +28,6 @@ BufferDEMGrid::~BufferDEMGrid() {
 #ifdef JAVA_CODE
   super.dispose();
 #endif
-}
-
-const Projection* BufferDEMGrid::getProjection() const {
-  return _projection;
 }
 
 double BufferDEMGrid::getElevation(int x, int y) const {

@@ -19,7 +19,7 @@ InterpolatedDEMGrid::InterpolatedDEMGrid(DEMGrid* grid,
                                          const Vector2I& extent,
                                          const Projection* projection,
                                          const Interpolator* interpolator):
-DecoratorDEMGrid(grid->getBaseData(),sector,extent),
+DecoratorDEMGrid(grid->getBaseData(),sector,extent, projection),
 _interpolator(interpolator),
 _projection(projection)
 {
