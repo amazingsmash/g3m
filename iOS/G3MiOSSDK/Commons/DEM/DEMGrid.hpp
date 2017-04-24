@@ -34,6 +34,9 @@ protected:
           const Projection* projection);
 
   virtual ~DEMGrid();
+  
+  double* _latitudes; //Storing each lat, lon for faster retrieval
+  double* _longitudes;
 
 public:
 
