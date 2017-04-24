@@ -55,14 +55,14 @@ const Angle WGS84Projection::getInnerPointLatitude(double v) const {
 }
 
 const Angle WGS84Projection::getInnerPointLongitude(const Sector& sector,
-                                                   double u) const {
+                                                    double u) const {
   return Angle::linearInterpolation(sector._lower._longitude,
                                     sector._upper._longitude,
                                     u);
 }
 
 const Angle WGS84Projection::getInnerPointLatitude(const Sector& sector,
-                                                  double v) const {
+                                                   double v) const {
   return Angle::linearInterpolation(sector._lower._latitude,
                                     sector._upper._latitude,
                                     1.0 - v);
@@ -70,4 +70,15 @@ const Angle WGS84Projection::getInnerPointLatitude(const Sector& sector,
 
 Geodetic2D* WGS84Projection::createInnerPoint(const Sector& sector, double u, double v) const{
   return new Geodetic2D(getInnerPointLatitude(sector, v), getInnerPointLongitude(sector, u));
+}
+
+Vector2D WGS84Projection::getUV(const Sector& sector, const Geodetic2D& p) const{
+  const double v = (sector._upper._latitude._radians - p._latitude._radians) /
+  (sector._upper._latitude._radians - sector._lower._latitude._radians );
+  
+  
+  const double u = (sector._upper._longitude._radians - p._longitude._radians) /
+  (sector._upper._longitude._radians - sector._lower._longitude._radians );
+  
+  return Vector2D(u,v);
 }

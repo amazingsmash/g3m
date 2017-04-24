@@ -11,6 +11,8 @@
 
 #include "Projection.hpp"
 
+#include "Vector2D.hpp"
+
 #warning ask Diego: shouldn't this be called just Mercator Proj?
 
 class WebMercatorProjection : public Projection {
@@ -42,6 +44,7 @@ public:
   const Angle getInnerPointLatitude(const Sector& sector,
                                     double v) const;
   
+  Vector2D getUV(const Sector& sector, const Geodetic2D& p) const;
 };
 
 #endif

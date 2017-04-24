@@ -88,3 +88,26 @@ const Angle WebMercatorProjection::getInnerPointLatitude(const Sector& sector,
 
   return getInnerPointLatitude(sV);
 }
+
+Vector2D WebMercatorProjection::getUV(const Sector& sector, const Geodetic2D& p) const{
+
+  const double sinMinSectorLat = SIN(sector._lower._latitude._radians);
+  const double sinMaxSectorLat = SIN(sector._upper._latitude._radians);
+  const double sinLat = SIN(p._latitude._radians);
+
+  const IMathUtils* mu = IMathUtils::instance();
+
+  const double fsinMinSectorLat = mu->log((-sinMinSectorLat-1) / (sinMinSectorLat-1));
+  const double fsinMaxSectorLat = mu->log((-sinMaxSectorLat-1) / (sinMaxSectorLat-1));
+  const double fsinLat = mu->log((-sinLat-1) / (sinLat-1));
+
+
+  const double v = (fsinMaxSectorLat - fsinLat) / (fsinMaxSectorLat - fsinMinSectorLat);
+
+  const double u = 1.0 - ((sector._upper._longitude._radians - p._longitude._radians) /
+  (sector._upper._longitude._radians - sector._lower._longitude._radians ));
+
+  return Vector2D(u,v);
+
+
+}

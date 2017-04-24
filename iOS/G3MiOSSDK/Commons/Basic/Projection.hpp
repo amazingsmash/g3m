@@ -57,7 +57,7 @@ public:
   
   Geodetic2D getInnerPoint(const Sector& sector, double u, double v) const;
   
-  Vector2D getUV(const Sector& sector, const Geodetic2D& p) const;
+  virtual Vector2D getUV(const Sector& sector, const Geodetic2D& p) const = 0;
   
 };
 

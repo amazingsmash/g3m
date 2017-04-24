@@ -10,8 +10,8 @@
 #define WGS84Projection_hpp
 
 #include "Projection.hpp"
+#include "Vector2D.hpp"
 
-#warning rename class missing C
 class WGS84Projection : public Projection {
 private:
   static WGS84Projection* INSTANCE;
@@ -39,6 +39,8 @@ public:
                                     double v) const;
   
   Geodetic2D* createInnerPoint(const Sector& sector, double u, double v) const;
+  
+  Vector2D getUV(const Sector& sector, const Geodetic2D& p) const;
   
 };
 
