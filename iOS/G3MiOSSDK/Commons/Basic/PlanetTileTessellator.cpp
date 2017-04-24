@@ -102,24 +102,24 @@ Mesh* PlanetTileTessellator::createTileMesh(const G3MRenderContext* rc,
                                             const ElevationData* elevationData,
                                             const DEMGrid* grid,
                                             TileTessellatorMeshData& tileTessellatorMeshData) const {
-//#warning UNCOMMENT FOR GRID CLOUD
-//  if (grid != NULL) {
-//    const Vector3D minMaxAverageElevations = DEMGridUtils::getMinMaxAverageElevations(grid);
-//    tileTessellatorMeshData._minHeight     = minMaxAverageElevations._x;
-//    tileTessellatorMeshData._maxHeight     = minMaxAverageElevations._y;
-//    // tileTessellatorMeshData._averageHeight = minMaxAverageElevations._z;
-//    tileTessellatorMeshData._averageHeight = 0;
-//    tileTessellatorMeshData._needsTexturizing = false;
-//    
-//    return DEMGridUtils::createDebugMesh(grid,
-//                                         rc->getPlanet(),
-//                                         prc->_verticalExaggeration,
-//                                         Geodetic3D::zero(), // offset
-//                                         -11000,             // minElevation
-//                                         9000,               // maxElevation
-//                                         15                  // pointSize
-//                                         );
-//  }
+#warning UNCOMMENT FOR GRID CLOUD
+  if (grid != NULL) {
+    const Vector3D minMaxAverageElevations = DEMGridUtils::getMinMaxAverageElevations(grid);
+    tileTessellatorMeshData._minHeight     = minMaxAverageElevations._x;
+    tileTessellatorMeshData._maxHeight     = minMaxAverageElevations._y;
+    // tileTessellatorMeshData._averageHeight = minMaxAverageElevations._z;
+    tileTessellatorMeshData._averageHeight = 0;
+    tileTessellatorMeshData._needsTexturizing = false;
+    
+    return DEMGridUtils::createDebugMesh(grid,
+                                         rc->getPlanet(),
+                                         prc->_verticalExaggeration,
+                                         Geodetic3D::zero(), // offset
+                                         -11000,             // minElevation
+                                         9000,               // maxElevation
+                                         15                  // pointSize
+                                         );
+  }
   
   const Sector tileSector = tile->_sector;
   const Sector meshSector = getRenderedSectorForTile(tile);

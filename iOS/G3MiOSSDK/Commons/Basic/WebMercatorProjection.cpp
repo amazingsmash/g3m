@@ -69,7 +69,7 @@ const Angle WebMercatorProjection::getInnerPointLatitude(double v) const {
   const IMathUtils* mu = IMathUtils::instance();
 
   const double exp = mu->exp(-2 * PI * (1.0 - v - 0.5));
-  const double atan = mu->atan(exp);
+  const double atan = mu->atan(exp + PI);
   return Angle::fromRadians((PI / 2) - 2 * atan);
 }
 
@@ -108,6 +108,4 @@ Vector2D WebMercatorProjection::getUV(const Sector& sector, const Geodetic2D& p)
   (sector._upper._longitude._radians - sector._lower._longitude._radians ));
 
   return Vector2D(u,v);
-
-
 }
