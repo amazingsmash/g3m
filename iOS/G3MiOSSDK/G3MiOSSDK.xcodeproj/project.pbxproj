@@ -279,10 +279,10 @@
 		CF73BFDB15E114E3001CE412 /* FrameTasksExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73BFD915E114E3001CE412 /* FrameTasksExecutor.cpp */; };
 		CF74A8811DDA010B000767A3 /* Projection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF74A87F1DDA010B000767A3 /* Projection.cpp */; };
 		CF74A8841DDA02DC000767A3 /* WebMercatorProjection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF74A8821DDA02DC000767A3 /* WebMercatorProjection.cpp */; };
-		CF74A8871DDA0626000767A3 /* WGS84Projetion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF74A8851DDA0626000767A3 /* WGS84Projetion.cpp */; };
+		CF74A8871DDA0626000767A3 /* WGS84Projection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF74A8851DDA0626000767A3 /* WGS84Projection.cpp */; };
 		CF74A8881DDA069D000767A3 /* Projection.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF74A8801DDA010B000767A3 /* Projection.hpp */; };
 		CF74A8891DDA069D000767A3 /* WebMercatorProjection.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF74A8831DDA02DC000767A3 /* WebMercatorProjection.hpp */; };
-		CF74A88A1DDA069D000767A3 /* WGS84Projetion.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF74A8861DDA0626000767A3 /* WGS84Projetion.hpp */; };
+		CF74A88A1DDA069D000767A3 /* WGS84Projection.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF74A8861DDA0626000767A3 /* WGS84Projection.hpp */; };
 		CF7529631E867FF0003C9605 /* FrustumData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7529611E867FF0003C9605 /* FrustumData.cpp */; };
 		CF7529641E868089003C9605 /* FrustumData.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF7529621E867FF0003C9605 /* FrustumData.hpp */; };
 		CF7529651E868089003C9605 /* Ray.hpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF45E1851E85519C00C36699 /* Ray.hpp */; };
@@ -882,7 +882,7 @@
 				CF44A0751DDE18FF00E5B270 /* SubsetDEMGrid.hpp in CopyFiles */,
 				CF74A8881DDA069D000767A3 /* Projection.hpp in CopyFiles */,
 				CF74A8891DDA069D000767A3 /* WebMercatorProjection.hpp in CopyFiles */,
-				CF74A88A1DDA069D000767A3 /* WGS84Projetion.hpp in CopyFiles */,
+				CF74A88A1DDA069D000767A3 /* WGS84Projection.hpp in CopyFiles */,
 				CF7947C01DD0ED2500376172 /* DEMGridUtils.hpp in CopyFiles */,
 				CFE11EC81DD0B94700355A89 /* AltitudeMode.hpp in CopyFiles */,
 				CFF99FF91DB92AA9008E4F14 /* DEMSubscription.hpp in CopyFiles */,
@@ -1667,8 +1667,8 @@
 		CF74A8801DDA010B000767A3 /* Projection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Projection.hpp; path = Commons/Basic/Projection.hpp; sourceTree = "<group>"; };
 		CF74A8821DDA02DC000767A3 /* WebMercatorProjection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebMercatorProjection.cpp; path = Commons/Basic/WebMercatorProjection.cpp; sourceTree = "<group>"; };
 		CF74A8831DDA02DC000767A3 /* WebMercatorProjection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = WebMercatorProjection.hpp; path = Commons/Basic/WebMercatorProjection.hpp; sourceTree = "<group>"; };
-		CF74A8851DDA0626000767A3 /* WGS84Projetion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WGS84Projetion.cpp; path = Commons/Basic/WGS84Projetion.cpp; sourceTree = "<group>"; };
-		CF74A8861DDA0626000767A3 /* WGS84Projetion.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = WGS84Projetion.hpp; path = Commons/Basic/WGS84Projetion.hpp; sourceTree = "<group>"; };
+		CF74A8851DDA0626000767A3 /* WGS84Projection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WGS84Projection.cpp; path = Commons/Basic/WGS84Projection.cpp; sourceTree = "<group>"; };
+		CF74A8861DDA0626000767A3 /* WGS84Projection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = WGS84Projection.hpp; path = Commons/Basic/WGS84Projection.hpp; sourceTree = "<group>"; };
 		CF7529611E867FF0003C9605 /* FrustumData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrustumData.cpp; path = Commons/Geometry/FrustumData.cpp; sourceTree = "<group>"; };
 		CF7529621E867FF0003C9605 /* FrustumData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FrustumData.hpp; path = Commons/Geometry/FrustumData.hpp; sourceTree = "<group>"; };
 		CF7539681C5C04EF006CE697 /* OrTileLODTester.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OrTileLODTester.cpp; path = Commons/Rendererers/OrTileLODTester.cpp; sourceTree = "<group>"; };
@@ -2538,8 +2538,8 @@
 				CF236E261CB3EE2D002D4D77 /* ViewMode.hpp */,
 				CF74A8821DDA02DC000767A3 /* WebMercatorProjection.cpp */,
 				CF74A8831DDA02DC000767A3 /* WebMercatorProjection.hpp */,
-				CF74A8851DDA0626000767A3 /* WGS84Projetion.cpp */,
-				CF74A8861DDA0626000767A3 /* WGS84Projetion.hpp */,
+				CF74A8851DDA0626000767A3 /* WGS84Projection.cpp */,
+				CF74A8861DDA0626000767A3 /* WGS84Projection.hpp */,
 			);
 			name = Basic;
 			sourceTree = "<group>";
@@ -3691,7 +3691,7 @@
 				CF0755961715B9120084CC14 /* GFont.cpp in Sources */,
 				CF15759E1864C1570059312A /* HUDRelativePosition.cpp in Sources */,
 				CF6D723B17184D620043C74B /* CanvasElement.cpp in Sources */,
-				CF74A8871DDA0626000767A3 /* WGS84Projetion.cpp in Sources */,
+				CF74A8871DDA0626000767A3 /* WGS84Projection.cpp in Sources */,
 				CF6D7240171854F50043C74B /* TextCanvasElement.cpp in Sources */,
 				CF6D724717185CF20043C74B /* GroupCanvasElement.cpp in Sources */,
 				CF1751D11BA617BB006286C6 /* StackLayoutImageBuilder.cpp in Sources */,

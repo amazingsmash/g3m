@@ -15,7 +15,7 @@
 #include "Vector2I.hpp"
 #include "ShortBufferDEMGrid.hpp"
 #include "IMathUtils.hpp"
-#include "WGS84Projetion.hpp"
+#include "WGS84Projection.hpp"
 
 
 ShortBufferElevationData* BILParser::oldParseBIL16(const Sector&      sector,
@@ -85,7 +85,7 @@ ShortBufferDEMGrid* BILParser::parseBIL16(const Sector&      sector,
     shortBuffer[i] = height;
   }
 
-  return new ShortBufferDEMGrid(WGS84Projetion::instance(),
+  return new ShortBufferDEMGrid(WGS84Projection::instance(),
                                 sector,
                                 extent,
                                 shortBuffer,

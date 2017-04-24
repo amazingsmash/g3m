@@ -39,7 +39,7 @@
 #include "DEMGrid.hpp"
 #include "Projection.hpp"
 #include "WebMercatorProjection.hpp"
-#include "WGS84Projetion.hpp"
+#include "WGS84Projection.hpp"
 
 
 PlanetTileTessellator::PlanetTileTessellator(const bool skirted, const Sector& sector):
@@ -574,7 +574,7 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
   if (mercator){
     textureProjection = WebMercatorProjection::instance();
   } else{
-    textureProjection = WGS84Projetion::instance();
+    textureProjection = WGS84Projection::instance();
   }
   
   for (int i = 0; i < verticesArray.size(); i++){

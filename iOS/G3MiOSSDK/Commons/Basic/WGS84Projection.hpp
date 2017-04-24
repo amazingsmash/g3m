@@ -1,29 +1,29 @@
 //
-//  WGS84Projetion.hpp
+//  WGS84Projection.hpp
 //  G3MiOSSDK
 //
 //  Created by Diego Gomez Deck on 11/14/16.
 //
 //
 
-#ifndef WGS84Projetion_hpp
-#define WGS84Projetion_hpp
+#ifndef WGS84Projection_hpp
+#define WGS84Projection_hpp
 
 #include "Projection.hpp"
 
 #warning rename class missing C
-class WGS84Projetion : public Projection {
+class WGS84Projection : public Projection {
 private:
-  static WGS84Projetion* INSTANCE;
+  static WGS84Projection* INSTANCE;
 
-  WGS84Projetion();
+  WGS84Projection();
 
 protected:
-  virtual ~WGS84Projetion();
+  virtual ~WGS84Projection();
 
 public:
 
-  static WGS84Projetion* instance();
+  static WGS84Projection* instance();
 
   const std::string getEPSG() const;
 
@@ -37,6 +37,8 @@ public:
                                      double u) const;
   const Angle getInnerPointLatitude(const Sector& sector,
                                     double v) const;
+  
+  Geodetic2D* createInnerPoint(const Sector& sector, double u, double v) const;
   
 };
 
