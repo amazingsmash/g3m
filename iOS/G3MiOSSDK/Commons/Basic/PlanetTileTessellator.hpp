@@ -82,7 +82,7 @@ private:
                                           float verticalExaggeration,
                                           FloatBufferBuilderFromGeodetic* vertices,
                                           TileTessellatorMeshData& tileTessellatorMeshData,
-                                          std::vector<Geodetic2D*>& verticesArray) const;
+                                          std::vector<const Geodetic2D*>& verticesArray) const;
   
   double createSurface(const Sector& tileSector,
                        const DEMGrid* demGrid,

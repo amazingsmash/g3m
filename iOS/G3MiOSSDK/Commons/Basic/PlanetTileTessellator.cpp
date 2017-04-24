@@ -267,7 +267,7 @@ Mesh* PlanetTileTessellator::createTileDebugMesh(const G3MRenderContext* rc,
   TileTessellatorMeshData tileTessellatorMeshData;
   
   if (demGrid != NULL){
-    std::vector<Geodetic2D *> verticesArray;
+    std::vector<const Geodetic2D *> verticesArray;
     createSurfaceVerticesFromDEMGrid(demGrid,
                                      prc->_verticalExaggeration,
                                      vertices,
@@ -379,7 +379,7 @@ double PlanetTileTessellator::createSurfaceVerticesFromDEMGrid(const DEMGrid* gr
                                                                float verticalExaggeration,
                                                                FloatBufferBuilderFromGeodetic* vertices,
                                                                TileTessellatorMeshData& tileTessellatorMeshData,
-                                                               std::vector<Geodetic2D*>& verticesArray) const{
+                                                               std::vector<const Geodetic2D*>& verticesArray) const{
   const IMathUtils* mu = IMathUtils::instance();
   double minElevation = mu->maxDouble();
   double maxElevation = mu->minDouble();
@@ -560,7 +560,7 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
                                             FloatBufferBuilderFromCartesian2D& textCoords,
                                             TileTessellatorMeshData& tileTessellatorMeshData) const {
   
-  std::vector<Geodetic2D*> verticesArray;
+  std::vector<const Geodetic2D*> verticesArray;
   
   //VERTICES
   const double minElevation = createSurfaceVerticesFromDEMGrid(demGrid,
