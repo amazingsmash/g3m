@@ -427,91 +427,423 @@ public:
  emptyString +  
 "uniform highp vec3 uCameraPosition;\n" +
 "varying highp vec3 rayDirection;\n" +
-"const highp float earthRadius = 6.36744e6;\n" +
-"const highp float atmosphereScale = 15.0;\n" +
-"const highp float stratoHeight = 50e3 * atmosphereScale;\n" +
-"const highp float atmUndergroundOffset = 100e3;\n" +
-"const highp float minHeight = 35000.0;\n" +
-"const highp vec4 whiteSky = vec4(1.0, 1.0, 1.0, 1.0);\n" +
-"const highp vec4 blueSky = vec4(135.0 / 255.0,\n" +
-"206.0 / 255.0,\n" +
-"235.0 / 255.0,\n" +
-"1.0);\n" +
-"const highp vec4 darkSpace = vec4(0.0, 0.0, 0.0, 1.0);\n" +
-"const highp vec4 groundSkyColor = mix(blueSky, whiteSky, smoothstep(0.0, 1.0, 0.5));\n" +
-"bool intersectionsWithAtmosphere(highp vec3 o, highp vec3 d,\n" +
-"out highp vec3 p1,\n" +
-"out highp vec3 p2) {\n" +
-"highp float a = dot(d,d);\n" +
-"highp float b = 2.0 * dot(o,d);\n" +
-"highp float r = earthRadius - atmUndergroundOffset; //Earth radius\n" +
-"highp float c = dot(o,o) - (r*r);\n" +
-"highp float q1 = (b*b) - 4.0 * a * c;\n" +
-"r = earthRadius + stratoHeight; //Atm. radius\n" +
-"c = dot(o,o) - (r*r);\n" +
-"highp float q2 = (b*b) - 4.0 * a * c;\n" +
-"bool valid = (q1 < 0.0) && (q2 > 0.0);\n" +
-"if (valid) {\n" +
-"highp float sq = sqrt(q2);\n" +
-"highp float t1 = (-b - sq) / (2.0*a);\n" +
-"highp float t2 = (-b + sq) / (2.0*a);\n" +
-"if (t1 < 0.0 && t2 < 0.0) {\n" +
-"return false;\n" +
-"}\n" +
-"p1 = o + d * max(min(t1,t2), 0.0);\n" +
-"p2 = o + d * max(t1,t2);\n" +
-"}\n" +
-"return valid;\n" +
-"}\n" +
-"highp float getRayFactor(highp vec3 o, highp vec3 d) {\n" +
-"d /= 1000.0;\n" +
-"o /= 1000.0;\n" +
-"highp float er = earthRadius / 1000.0;\n" +
-"highp float sh = (stratoHeight + earthRadius) / 1000.0;\n" +
-"highp float ld = dot(d,d);\n" +
-"highp float pdo = dot(d,o);\n" +
-"highp float dx = d.x;\n" +
-"highp float dy = d.y;\n" +
-"highp float dz = d.z;\n" +
-"highp float ox = o.x;\n" +
-"highp float oy = o.y;\n" +
-"highp float oz = o.z;\n" +
-"highp float dox2 = (dx + ox) * (dx + ox);\n" +
-"highp float doy2 = (dy + oy) * (dy + oy);\n" +
-"highp float doz2 = (dz + oz) * (dz + oz);\n" +
-"highp float ox2 = ox * ox;\n" +
-"highp float oy2 = oy * oy;\n" +
-"highp float oz2 = oz * oz;\n" +
-"highp float dx2 = dx * dx;\n" +
-"highp float dy2 = dy * dy;\n" +
-"highp float dz2 = dz * dz;\n" +
-"return ((((dx*(dx + ox) + dy*(dy + oy) + dz*(dz + oz))*\n" +
-"sqrt(dox2 + doy2 + doz2))/ld -\n" +
-"(sqrt(ox2 + oy2 + oz2)*pdo)/ld - 2.*sh +\n" +
-"((dz2*(ox2 + oy2) - 2.0*dx*dz*ox*oz - 2.0*dy*oy*(dx*ox + dz*oz) +\n" +
-"dy2*(ox2 + oz2) + dx2*(oy2 + oz2))*\n" +
-"log(dx*(dx + ox) + dy*(dy + oy) + dz*(dz + oz) +\n" +
-"sqrt(ld)*sqrt(dox2 + doy2 + doz2)))/pow(ld,1.5) -\n" +
-"((dz2*(ox2 + oy2) - 2.0*dx*dz*ox*oz - 2.0*dy*oy*(dx*ox + dz*oz) +\n" +
-"dy2*(ox2 + oz2) + dx2*(oy2 + oz2))*\n" +
-"log(sqrt(ld)*sqrt(ox2 + oy2 + oz2) + pdo))/pow(ld,1.5))/\n" +
-"(2.*(er - 1.*sh)));\n" +
-"}\n" +
 "void main() {\n" +
-"highp vec3 sp1, sp2;\n" +
-"bool valid = intersectionsWithAtmosphere(uCameraPosition, rayDirection, sp1, sp2);\n" +
-"if (valid) {\n" +
-"highp float f = getRayFactor(sp1, sp2 - sp1) * 1.3;\n" +
-"highp vec4 color = mix(darkSpace, blueSky, smoothstep(0.0, 1.0, f));\n" +
-"color = mix(color, whiteSky, smoothstep(0.7, 1.0, f));\n" +
-"highp float camHeight = length(uCameraPosition) - earthRadius;\n" +
-"gl_FragColor = mix(color, groundSkyColor, smoothstep(minHeight, minHeight / 4.0, camHeight));\n" +
-"}\n" +
-"else {\n" +
-"gl_FragColor = darkSpace;\n" +
-"}\n" +
+"gl_FragColor = vec4(1.0,0.0,0.0,1.0);\n" +
 "}\n");
     this->add(sourcesSphericalAtmosphere);
+
+    GPUProgramSources sourcesSphericalAtmosphere2("SphericalAtmosphere2",
+ emptyString +  
+"attribute vec4 aPosition; //Position of ZNear Frame corners in world-space\n" +
+"uniform mat4 uModelview; //Model + Projection\n" +
+"uniform float uPointSize;\n" +
+"uniform highp vec3 uCameraPosition;\n" +
+"varying highp vec3 rayDir;\n" +
+"void main() {\n" +
+"gl_Position = uModelview * aPosition;\n" +
+"gl_Position.z = 0.0;\n" +
+"gl_PointSize = uPointSize;\n" +
+"highp vec3 planePos = aPosition.xyz;\n" +
+"rayDir = planePos - uCameraPosition;\n" +
+"}\n",
+ emptyString +  
+"precision highp float;\n" +
+"uniform highp vec3 uCameraPosition;\n" +
+"varying highp vec3 rayDir;\n" +
+"highp vec3 currentSunDir = vec3(1.0, 0.0, 0.0);\n" +
+"const highp float earthRadius = 6.36744e6;\n" +
+"const highp float atmUndergroundOffset = 100e3;\n" +
+"const highp float atmosphereScale = 3.0; //Atm. scale\n" +
+"const highp float stratoHeight = 50e3 * atmosphereScale;\n" +
+"const highp float atmRadius = earthRadius + stratoHeight;\n" +
+"const highp float earth2AtmRatio = earthRadius / atmRadius;\n" +
+"const highp mat3 CIE2RGB = mat3(3.2405,   -0.9693,    0.0556,\n" +
+"-1.5371,    1.8760,   -0.2040,\n" +
+"-0.4985,    0.0416,    1.0572);\n" +
+"const highp mat3 RGB2CIE = mat3(0.4125,    0.2127,    0.0193,\n" +
+"0.3576,    0.7152,    0.1192,\n" +
+"0.1804,    0.0722,    0.9503);\n" +
+"const float NaN = sqrt(-1.0);\n" +
+"highp mat4 rotationMatrix(highp vec3 axis, highp float angle)\n" +
+"{\n" +
+"axis = normalize(axis);\n" +
+"highp float s = sin(angle);\n" +
+"highp float c = cos(angle);\n" +
+"highp float oc = 1.0 - c;\n" +
+"return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n" +
+"oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n" +
+"oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n" +
+"0.0,                                0.0,                                0.0,                                1.0);\n" +
+"}\n" +
+"highp vec2 raySphereIntersect(highp vec3 r0, highp vec3 rd, highp vec3 s0, highp float sr) {\n" +
+"highp float a = dot(rd, rd);\n" +
+"highp vec3 s0_r0 = r0 - s0;\n" +
+"highp float b = 2.0 * dot(rd, s0_r0);\n" +
+"highp float c = dot(s0_r0, s0_r0) - (sr * sr);\n" +
+"highp float sq = b*b - 4.0*a*c;\n" +
+"if (sq < 0.0) {\n" +
+"return vec2(-1.0, -1.0);\n" +
+"}\n" +
+"sq = sqrt(b*b - 4.0*a*c);\n" +
+"highp float s1 = (-b - sq)/(2.0*a);\n" +
+"highp float s2 = (-b + sq)/(2.0*a);\n" +
+"return vec2(min(s1,s2), max(s1,s2));\n" +
+"}\n" +
+"highp mat3 getChangeOfBasis(in highp vec3 pa, in  highp vec3 pb,\n" +
+"out  highp float x0,\n" +
+"out  highp float x1,\n" +
+"out  highp float y0){\n" +
+"highp float tol = 20000.0;\n" +
+"highp vec3 d = normalize(pb - pa);\n" +
+"highp vec3 c = normalize(pa + (dot(-pa,d)*d));\n" +
+"highp mat3 m;\n" +
+"m[0] = d;\n" +
+"m[1] = c;\n" +
+"m[2] = cross(c,d);\n" +
+"highp mat3 m2;\n" +
+"m2[0][0] = m[0][0];\n" +
+"m2[0][1] = m[1][0];\n" +
+"m2[0][2] = m[2][0];\n" +
+"m2[1][0] = m[0][1];\n" +
+"m2[1][1] = m[1][1];\n" +
+"m2[1][2] = m[2][1];\n" +
+"m2[2][0] = m[0][2];\n" +
+"m2[2][1] = m[1][2];\n" +
+"m2[2][2] = m[2][2];\n" +
+"m = m2;\n" +
+"highp vec3 mpa = m * pa;\n" +
+"highp vec3 mpb = m * pb;\n" +
+"if (abs(mpa.z) > tol || abs(mpa.y - mpb.y) > tol){ //Checking\n" +
+"x0 = x1 = y0 = 0.0;\n" +
+"return m; //Error\n" +
+"}\n" +
+"x0 = min(mpa.x, mpb.x);\n" +
+"x1 = max(mpa.x, mpb.x);\n" +
+"y0 = abs(mpa.y);\n" +
+"if (x0 > 0.0){ //All rays should start from negative X\n" +
+"float aux = x0;\n" +
+"x0 = -x1;\n" +
+"x1 = -aux;\n" +
+"}\n" +
+"return m;\n" +
+"}\n" +
+"float sampledXFor5Samples(float x0, float x1, int n){\n" +
+"float d = x1-x0;\n" +
+"if (x1 <= 0.0){\n" +
+"if (n == 0) return x0;\n" +
+"if (n == 1) return x0 + d * 0.0321;\n" +
+"if (n == 2) return x0 + d * 0.1192;\n" +
+"if (n == 3) return x0 + d * 0.3561;\n" +
+"if (n == 4) return x1;\n" +
+"} else{\n" +
+"if (n == 0) return d * -0.5;\n" +
+"if (n == 1) return d * -0.1192;\n" +
+"if (n == 2) return 0.0;\n" +
+"if (n == 3) return d * 0.1192;\n" +
+"if (n == 4) return d * 0.5;\n" +
+"}\n" +
+"return -1.0e10;\n" +
+"}\n" +
+"highp mat3 rayTo2D(in highp vec3 pa, in  highp vec3 pb){\n" +
+"highp mat3 m;\n" +
+"if (abs(pa.z) + distance(pa.y, pb.y) < 1e-7){ //Checking\n" +
+"m = mat3(1.,0.,0.,\n" +
+"0.,1.,0.,\n" +
+"0.,0.,1.);\n" +
+"} else{\n" +
+"highp vec3 d = normalize(pb - pa);\n" +
+"highp vec3 c = normalize(pa + (dot(-pa,d)*d));\n" +
+"m[0] = d;\n" +
+"m[1] = c;\n" +
+"m[2] = cross(c,d);\n" +
+"m = mat3(m[0][0], m[1][0], m[2][0],\n" +
+"m[0][1], m[1][1], m[2][1],\n" +
+"m[0][2], m[1][2], m[2][2]);\n" +
+"}\n" +
+"return m;\n" +
+"}\n" +
+"vec2 earthShadow2D(highp float Y0, highp mat3 m, vec3 sunDir){\n" +
+"sunDir = normalize(sunDir);\n" +
+"vec3 p2 = normalize(m * sunDir); //Sun Pos\n" +
+"highp float x2 = p2.x;\n" +
+"highp float y2 = p2.y;\n" +
+"highp float z2 = p2.z;\n" +
+"highp float R = earth2AtmRatio;\n" +
+"highp float s = -(pow(x2,2.0)*pow(Y0,2.0)*pow(z2,2.0)) +\n" +
+"pow(R,2.0)*(pow(y2,2.0) + pow(z2,2.0)) -\n" +
+"(pow(y2,2.0) + pow(z2,2.0))*pow(Y0*z2,2.0);\n" +
+"if (s >= 0.0){\n" +
+"highp float n = x2*Y0*y2;\n" +
+"highp float d = (pow(y2,2.0) + pow(z2,2.0));\n" +
+"s = sqrt(s);\n" +
+"highp float s1 = (n - s)/ d;\n" +
+"highp float s2 = (n + s)/ d;\n" +
+"if (distance(vec2(s1,Y0), p2.xy) <  distance(vec2(s1,Y0), -p2.xy)){\n" +
+"return vec2(s1,s2);\n" +
+"}\n" +
+"}\n" +
+"return vec2(NaN, NaN);\n" +
+"}\n" +
+"highp vec4 getRay2DEnds(vec2 p1, vec2 p2,\n" +
+"mat3 m, vec3 sunDir,\n" +
+"out bool atm,\n" +
+"out bool earth,\n" +
+"out bool shadow){\n" +
+"highp float atm1 = -sqrt(1.0 - p1.y*p1.y);\n" +
+"highp float atm2 = -atm1;\n" +
+"atm1 = clamp(atm1, p1.x, p2.x);\n" +
+"atm2 = clamp(atm2, p1.x, p2.x);\n" +
+"atm = (atm1 != atm2);\n" +
+"highp float earth1 = -sqrt(earth2AtmRatio*earth2AtmRatio - p1.y*p1.y);\n" +
+"highp float earth2 = -earth1;\n" +
+"earth1 = clamp(earth1, p1.x, p2.x);\n" +
+"earth2 = clamp(earth2, p1.x, p2.x);\n" +
+"earth = (earth1 != earth2);\n" +
+"highp vec2 shadows = earthShadow2D(p1.y, m, sunDir);\n" +
+"highp float rayEnd = earth? earth1 : atm2;\n" +
+"highp float shadow1 = clamp(shadows.x, atm1, rayEnd);\n" +
+"highp float shadow2 = clamp(shadows.y, atm1, rayEnd);\n" +
+"shadow = (shadows.x == shadows.x) && (shadow1 != shadow2);\n" +
+"if (!atm){\n" +
+"return vec4(0.,0.,0.,0.);\n" +
+"}\n" +
+"if (!earth && !shadow){\n" +
+"return vec4(atm1, atm2, 0., 0.);\n" +
+"}\n" +
+"if (earth && !shadow){\n" +
+"return vec4(atm1, earth1, 0., 0.);\n" +
+"}\n" +
+"if (earth && shadow){\n" +
+"return vec4(atm1, shadow1, 0., 0.);\n" +
+"}\n" +
+"if (!earth && shadow){\n" +
+"return vec4(atm1, shadow1, shadow2, atm2);\n" +
+"}\n" +
+"}\n" +
+"const int nSamplesPrimaryRay = 21;\n" +
+"highp float sampledXFor21Samples(float x0, float x1, int n){\n" +
+"if (x0*x1 < 0.0){\n" +
+"if (n == 0) return x0 * 1.000000;\n" +
+"if (n == 1) return x0 * 0.899549;\n" +
+"if (n == 2) return x0 * 0.799199;\n" +
+"if (n == 3) return x0 * 0.698949;\n" +
+"if (n == 4) return x0 * 0.598800;\n" +
+"if (n == 5) return x0 * 0.498750;\n" +
+"if (n == 6) return x0 * 0.398800;\n" +
+"if (n == 7) return x0 * 0.298951;\n" +
+"if (n == 8) return x0 * 0.199201;\n" +
+"if (n == 9) return x0 * 0.099551;\n" +
+"if (n == 10) return 0.0;\n" +
+"if (n == 0) return x1 * 0.099551;\n" +
+"if (n == 1) return x1 * 0.199201;\n" +
+"if (n == 2) return x1 * 0.298951;\n" +
+"if (n == 3) return x1 * 0.398800;\n" +
+"if (n == 4) return x1 * 0.498750;\n" +
+"if (n == 5) return x1 * 0.598800;\n" +
+"if (n == 6) return x1 * 0.698949;\n" +
+"if (n == 7) return x1 * 0.799199;\n" +
+"if (n == 8) return x1 * 0.899549;\n" +
+"if (n == 9) return x1 * 1.000000;\n" +
+"}\n" +
+"highp float d = x1-x0;\n" +
+"if (n == 0) return x0 + d * 0.000000;\n" +
+"if (n == 1) return x0 + d * 0.184651;\n" +
+"if (n == 2) return x0 + d * 0.335831;\n" +
+"if (n == 3) return x0 + d * 0.459606;\n" +
+"if (n == 4) return x0 + d * 0.560945;\n" +
+"if (n == 5) return x0 + d * 0.643914;\n" +
+"if (n == 6) return x0 + d * 0.711844;\n" +
+"if (n == 7) return x0 + d * 0.767460;\n" +
+"if (n == 8) return x0 + d * 0.812994;\n" +
+"if (n == 9) return x0 + d * 0.850274;\n" +
+"if (n == 10) return x0 + d * 0.880797;\n" +
+"if (n == 11) return x0 + d * 0.905787;\n" +
+"if (n == 12) return x0 + d * 0.926247;\n" +
+"if (n == 13) return x0 + d * 0.942998;\n" +
+"if (n == 14) return x0 + d * 0.956713;\n" +
+"if (n == 15) return x0 + d * 0.967941;\n" +
+"if (n == 16) return x0 + d * 0.977135;\n" +
+"if (n == 17) return x0 + d * 0.984661;\n" +
+"if (n == 18) return x0 + d * 0.990824;\n" +
+"if (n == 19) return x0 + d * 0.995869;\n" +
+"if (n == 20) return x0 + d * 1.000000;\n" +
+"}\n" +
+"float gFun(highp float a, highp float r){\n" +
+"if (a > 1.6) return 4.2214e-04; //Mean value beyond a = 1.6\n" +
+"r = (r - earth2AtmRatio) / (1.0 - earth2AtmRatio); //Normalizing [0..1]\n" +
+"highp float x = r;\n" +
+"highp float y = a;\n" +
+"highp float x2 = x*x;\n" +
+"highp float y2 = y*y;\n" +
+"highp float x3 = x*x*x;\n" +
+"highp float y3 = y*y*y;\n" +
+"highp float x4 = x*x*x*x;\n" +
+"highp float y4 = y*y*y*y;\n" +
+"highp float x5 = x*x*x*x*x;\n" +
+"highp float y5 = y*y*y*y*y;\n" +
+"highp float g = 1787776115.6965 + -51039518.5128*x + -5614573368.3089*y +\n" +
+"865443.705*x2 + 128015133.8374*x*y + 7053069042.9223*y2 +\n" +
+"-10398.8322*x3 + -1624280.2711*x2*y + -120405648.8163*x*y2 +\n" +
+"-4430036061.6336*y3 + 93.8694*x4 + 12958.7149*x3*y + 1016173.9827*x2*y2 +\n" +
+"50332603.1065*x*y3 + 1391246665.5755*y4 + -0.64185*x5 + -57.8523*x4*y +\n" +
+"-4037.6155*x3*y2 + -211914.0726*x2*y3 + -7890102.7191*x*y4 + -174766723.1861*y5;\n" +
+"g = clamp(g, 0.0, 1.0);\n" +
+"return g;\n" +
+"}\n" +
+"float getOpticalDepthFromInfinity(vec2 p){\n" +
+"highp float a = abs(atan(p.y, p.x)); // Atan->[\u2212Pi,Pi]\n" +
+"highp float r = length(p);\n" +
+"highp float f;\n" +
+"if (a > 0.0 && a < 1.57){ //0 < Pi/2\n" +
+"f = 2.0 * gFun(1.5708, abs(p.y)) - gFun(3.1416 - a, r);\n" +
+"f = clamp(f, 0.0, 2.0);\n" +
+"} else{\n" +
+"f = gFun(a, r);\n" +
+"}\n" +
+"return f;\n" +
+"}\n" +
+"highp float getSolarOutScattering(vec3 p, vec3 sunDir){\n" +
+"highp vec3 pc = p - normalize(sunDir);\n" +
+"highp mat3 m = rayTo2D(pc, p);\n" +
+"pc = m * pc;\n" +
+"p = m * p;\n" +
+"if (pc.x * p.x < 0.0  && pc.y < earth2AtmRatio){ //Earth shadow\n" +
+"return -1.0; //Infinity\n" +
+"} else{\n" +
+"return getOpticalDepthFromInfinity(p.xy);\n" +
+"}\n" +
+"}\n" +
+"highp float getInnerOutScattering(float x0, float x1, float y0){\n" +
+"highp float i = getOpticalDepthFromInfinity(vec2(x0, y0));\n" +
+"highp float f = getOpticalDepthFromInfinity(vec2(x1, y0));\n" +
+"return (f - i);\n" +
+"}\n" +
+"highp float getDensityCoefficient(float x, float y){\n" +
+"highp vec2 p = vec2(x, y);\n" +
+"highp float h = (length(p) - earth2AtmRatio) / ((atmRadius - earthRadius) / atmRadius);\n" +
+"highp float d = exp(-h*6.2547); //Density Coefficient\n" +
+"return d;\n" +
+"}\n" +
+"highp float Xs[nSamplesPrimaryRay];\n" +
+"highp float scatteringFactors[nSamplesPrimaryRay];\n" +
+"highp float outScatteringFactors[nSamplesPrimaryRay];\n" +
+"void calculateScatteringFactorsAndXs(vec3 sunDir,\n" +
+"vec3 sp1,\n" +
+"vec3 sp2,\n" +
+"highp float x0,\n" +
+"highp float x1,\n" +
+"highp float y0){\n" +
+"highp vec3 ray3DDir = normalize(sp2-sp1);\n" +
+"for (int i = 0; i < nSamplesPrimaryRay; i++){\n" +
+"Xs[i] = sampledXFor21Samples(x0, x1, i);\n" +
+"highp vec3 p = (Xs[i] - x0) * ray3DDir + sp1;\n" +
+"highp float so = getSolarOutScattering(p ,sunDir);\n" +
+"if (so < 0.0){\n" +
+"outScatteringFactors[i] = -1.0;\n" +
+"} else{\n" +
+"highp float io = getInnerOutScattering(x0, Xs[i], y0);\n" +
+"outScatteringFactors[i] = (so + io);\n" +
+"}\n" +
+"scatteringFactors[i] = getDensityCoefficient(Xs[i], y0);\n" +
+"}\n" +
+"}\n" +
+"float getAtmWavelengthIntensity(highp float gScale4PiKw4){\n" +
+"return 1.0; //TODO\n" +
+"highp float intensity = 0.0;\n" +
+"highp float d_1 = scatteringFactors[0] * exp(- gScale4PiKw4 * outScatteringFactors[0]);\n" +
+"for (int i = 1; i < nSamplesPrimaryRay; i++){\n" +
+"highp float d = 0.0;\n" +
+"if (outScatteringFactors[i] >= 0.0){\n" +
+"d = scatteringFactors[i] * exp(- gScale4PiKw4 * outScatteringFactors[i]);\n" +
+"}\n" +
+"intensity += ((d + d_1)/2.0) * (Xs[i] - Xs[i-1]); //Trapezoidal integration\n" +
+"d_1 = d; //For next iteration\n" +
+"}\n" +
+"return intensity;\n" +
+"}\n" +
+"void main() {\n" +
+"highp vec3 p1 = uCameraPosition/atmRadius;\n" +
+"highp vec3 p2 = (uCameraPosition + normalize(rayDir)*1e10)/atmRadius;\n" +
+"highp mat3 m = rayTo2D(p1, p2);\n" +
+"highp vec2 mp1 = (m * p1).xy;\n" +
+"highp vec2 mp2 = (m * p2).xy;\n" +
+"if (mp1.x > mp2.x){\n" +
+"highp vec2 aux = mp1;\n" +
+"mp1 = mp2;\n" +
+"mp2 = aux;\n" +
+"highp vec3 aux3 = p1;\n" +
+"p1 = p2;\n" +
+"p2 = aux3;\n" +
+"}\n" +
+"bool atm;\n" +
+"bool earth;\n" +
+"bool shadow;\n" +
+"vec4 ends = getRay2DEnds(mp1, mp2,\n" +
+"m, currentSunDir,\n" +
+"atm,\n" +
+"earth,\n" +
+"shadow);\n" +
+"vec3 bgColor = vec3(0.,0.,0.);\n" +
+"if (atm){\n" +
+"const int nW = 9;\n" +
+"highp vec3 CIElevels[9];\n" +
+"CIElevels[0] = vec3(4.568698e-02, 2.536497e-04, 2.536274e-01); //w = 380.00 - 424.44\n" +
+"CIElevels[1] = vec3(1.904479e-01, 1.411401e-02, 1.000000e+00); //w = 424.44 - 468.89\n" +
+"CIElevels[2] = vec3(2.882708e-02, 1.250434e-01, 2.311921e-01); //w = 468.89 - 513.33\n" +
+"CIElevels[3] = vec3(7.525619e-02, 2.688203e-01, 4.168597e-03); //w = 513.33 - 557.78\n" +
+"CIElevels[4] = vec3(1.968837e-01, 1.856631e-01, 8.178416e-06); //w = 557.78 - 602.22\n" +
+"CIElevels[5] = vec3(1.115830e-01, 5.053781e-02, 2.669158e-09); //w = 602.22 - 646.67\n" +
+"CIElevels[6] = vec3(1.355325e-02, 6.385989e-03, 2.110279e-13); //w = 646.67 - 691.11\n" +
+"CIElevels[7] = vec3(3.337662e-04, 4.290635e-04, 5.467493e-18); //w = 691.11 - 735.56\n" +
+"CIElevels[8] = vec3(1.571319e-06, 1.715437e-05, 5.889087e-23); //w = 735.56 - 780.00\n" +
+"highp float I0CIEKw4Scale = 3.654184e+00;\n" +
+"highp float gScale4PiKw4[9];\n" +
+"gScale4PiKw4[0] = 333.162685;\n" +
+"gScale4PiKw4[1] = 219.071773;\n" +
+"gScale4PiKw4[2] = 149.899974;\n" +
+"gScale4PiKw4[3] = 105.999174;\n" +
+"gScale4PiKw4[4] = 77.056384;\n" +
+"gScale4PiKw4[5] = 57.351578;\n" +
+"gScale4PiKw4[6] = 43.561685;\n" +
+"gScale4PiKw4[7] = 33.678328;\n" +
+"gScale4PiKw4[8] = 26.445582;\n" +
+"highp vec3 atmCIE = vec3(.0,.0,.0);\n" +
+"highp vec3 ini, end;\n" +
+"if (ends.x - ends.y > 1e-2){\n" +
+"ini = p1 + ((ends.x - mp1.x) / (mp2.x - mp1.x)) * (p2-p1);\n" +
+"end = p1 + ((ends.y - mp1.x) / (mp2.x - mp1.x)) * (p2-p1);\n" +
+"calculateScatteringFactorsAndXs(currentSunDir,\n" +
+"ini, end,\n" +
+"ends.x, ends.y, mp1.y);\n" +
+"for (int i = 0; i < nW; i++){\n" +
+"highp float intensity = getAtmWavelengthIntensity(gScale4PiKw4[i]); //gScale * 4 * Pi * K / w^-4\n" +
+"atmCIE += CIElevels[i] * intensity;\n" +
+"}\n" +
+"}\n" +
+"if (ends.w - ends.z > 1e-2){\n" +
+"ini = p1 + ((ends.z - mp1.x) / (mp2.x - mp1.x)) * (p2-p1);\n" +
+"end = p1 + ((ends.w - mp1.x) / (mp2.x - mp1.x)) * (p2-p1);\n" +
+"calculateScatteringFactorsAndXs(currentSunDir,\n" +
+"ini, end,\n" +
+"ends.z, ends.w, mp1.y);\n" +
+"for (int i = 0; i < nW; i++){\n" +
+"highp float intensity = getAtmWavelengthIntensity(gScale4PiKw4[i]); //gScale * 4 * Pi * K / w^-4\n" +
+"atmCIE += CIElevels[i] * intensity;\n" +
+"}\n" +
+"}\n" +
+"highp vec3 rayDir = p2 - p1;\n" +
+"highp float cosAngle = dot(normalize(currentSunDir), normalize(rayDir));\n" +
+"highp float fr = (3.0/4.0)* (1.0+pow(cosAngle,2.0));\n" +
+"atmCIE *= I0CIEKw4Scale * atmRadius * fr;\n" +
+"highp float dimmingFactor = 1.0;// 1e-6;\n" +
+"atmCIE *= dimmingFactor;\n" +
+"highp vec3 atmColor = CIE2RGB * atmCIE;\n" +
+"gl_FragColor = vec4(atmColor, 1.0);\n" +
+"} else{\n" +
+"gl_FragColor = vec4(1.,1.,0.,1.);\n" +
+"}\n" +
+"}\n");
+    this->add(sourcesSphericalAtmosphere2);
 
     GPUProgramSources sourcesTextured2DMesh("Textured2DMesh",
  emptyString +  

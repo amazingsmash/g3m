@@ -2080,6 +2080,8 @@
 		D89FBD7A172543D100FFA541 /* RectangleF.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RectangleF.hpp; path = Commons/Geometry/RectangleF.hpp; sourceTree = "<group>"; };
 		D89FBD7B1725444800FFA541 /* MeshShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MeshShape.cpp; path = Commons/Rendererers/MeshShape.cpp; sourceTree = "<group>"; };
 		D89FBD7C1725444800FFA541 /* MeshShape.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MeshShape.hpp; path = Commons/Rendererers/MeshShape.hpp; sourceTree = "<group>"; };
+		D8A4F95F1EF7C50500BAC642 /* SphericalAtmosphere2.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = SphericalAtmosphere2.fsh; sourceTree = "<group>"; };
+		D8A4F9601EF7C50500BAC642 /* SphericalAtmosphere2.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = SphericalAtmosphere2.vsh; sourceTree = "<group>"; };
 		D8A5601B15AEF64E00035086 /* IndexedMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IndexedMesh.cpp; path = Commons/Mesh/IndexedMesh.cpp; sourceTree = "<group>"; };
 		D8A5601C15AEF64E00035086 /* IndexedMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; name = IndexedMesh.hpp; path = Commons/Mesh/IndexedMesh.hpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		D8A5601D15AEF64E00035086 /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mesh.cpp; path = Commons/Mesh/Mesh.cpp; sourceTree = "<group>"; };
@@ -3267,6 +3269,8 @@
 		E70B56E016D3CCCD00C5FFFB /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
+				D8A4F95F1EF7C50500BAC642 /* SphericalAtmosphere2.fsh */,
+				D8A4F9601EF7C50500BAC642 /* SphericalAtmosphere2.vsh */,
 				D8B50F821DABCBDA00FA96FA /* SphericalAtmosphere.fsh */,
 				D8B50F831DABCBDA00FA96FA /* SphericalAtmosphere.vsh */,
 				D8C3BA2E1946174D003F6642 /* Billboard_TransformedTexCoor.vsh */,

@@ -455,6 +455,10 @@ public:
   }
   
   void printShaderInfoLog(int shader) const {
+    const GLubyte* ver = glGetString(GL_SHADING_LANGUAGE_VERSION);
+    NSLog(@"GLSL Version: %s", ver);
+    
+    
     GLint logLength;
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
     if (logLength > 0) {
