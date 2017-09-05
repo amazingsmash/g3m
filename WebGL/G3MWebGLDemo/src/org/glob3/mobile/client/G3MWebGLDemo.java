@@ -2,6 +2,16 @@
 
 package org.glob3.mobile.client;
 
+import org.glob3.mobile.generated.AtmosphereRenderer;
+import org.glob3.mobile.generated.LayerSet;
+import org.glob3.mobile.generated.LayerTilesRenderParameters;
+import org.glob3.mobile.generated.OSMLayer;
+import org.glob3.mobile.generated.Sector;
+import org.glob3.mobile.generated.TimeInterval;
+import org.glob3.mobile.generated.URL;
+import org.glob3.mobile.generated.WMSLayer;
+import org.glob3.mobile.generated.WMSServerVersion;
+import org.glob3.mobile.specific.Downloader_WebGL;
 import org.glob3.mobile.specific.G3MBuilder_WebGL;
 import org.glob3.mobile.specific.G3MWidget_WebGL;
 
@@ -31,6 +41,50 @@ public class G3MWebGLDemo
       */
 
       final G3MBuilder_WebGL builder = new G3MBuilder_WebGL();
+      
+      LayerSet layerSet = new LayerSet();
+      
+      WMSLayer blueMarble = new WMSLayer("bmng200405",
+              new URL("http://www.nasa.network.com/wmsxxxx?", false),
+              WMSServerVersion.WMS_1_1_0,
+              Sector.fromDegrees(40.1240143280790858,
+                                  -5.8964874640814313,
+                                  40.3723148480663158,
+                                  -5.4816079822178570),
+              //                                          Sector::fromDegrees(0,
+              //                                                              -90,
+              //                                                              45,
+              //                                                              0),
+              //                                          Sector::fullSphere(),
+              //                                          Sector::fromDegrees(39.13, -6.86, 39.66, -6.05),
+              
+              "image/jpeg",
+              "EPSG:4326",
+              "",
+              false,
+              null, //new LevelTileCondition(0, 6),
+              //NULL,
+              TimeInterval.fromDays(0),
+              true,
+              LayerTilesRenderParameters.createDefaultWGS84(Sector.fullSphere(), 0, 8),
+              1);
+      
+      final String proxy = null; // "http://galileo.glob3mobile.com/" + "proxy.php?url="
+      builder.setDownloader(new Downloader_WebGL( //
+               8, // maxConcurrentOperationCount
+               10, // delayMillis
+               proxy));
+      
+     // layerSet.addLayer(blueMarble);
+      
+
+      builder.setAtmosphere(true);
+      
+      layerSet.addLayer(new OSMLayer(TimeInterval.fromDays(30)));
+      
+      builder.getPlanetRendererBuilder().setLayerSet(layerSet);
+      
+      builder.addRenderer(new AtmosphereRenderer());
       _widget = builder.createWidget();
 
       final Panel g3mWidgetHolder = RootPanel.get(_g3mWidgetHolderId);

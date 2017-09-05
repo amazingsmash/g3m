@@ -10,7 +10,7 @@ uniform mat4 uModelview; //Model + Projection
 uniform float uPointSize;
 
 uniform highp vec3 uCameraPosition;
-varying highp vec3 rayDir;
+varying highp vec3 rayDirirection;
 
 void main() {
   gl_Position = uModelview * aPosition;
@@ -20,5 +20,5 @@ void main() {
   highp vec3 planePos = aPosition.xyz;
 
   //Ray [O + tD = X]
-  rayDir = planePos - uCameraPosition;
+  rayDirirection = planePos - uCameraPosition;
 }

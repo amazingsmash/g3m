@@ -7,7 +7,7 @@
 precision highp float;
 
 uniform highp vec3 uCameraPosition;
-varying highp vec3 rayDir;
+varying highp vec3 rayDirirection;
 
 //uniform highp vec3 currentSunDir;
 highp vec3 currentSunDir = vec3(1.0, 0.0, 0.0);
@@ -32,138 +32,6 @@ const highp mat3 RGB2CIE = mat3(0.4125,    0.2127,    0.0193,
 
 const float NaN = sqrt(-1.0);
 
-highp mat4 rotationMatrix(highp vec3 axis, highp float angle)
-{
-  axis = normalize(axis);
-  highp float s = sin(angle);
-  highp float c = cos(angle);
-  highp float oc = 1.0 - c;
-  
-  return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
-              oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
-              oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
-              0.0,                                0.0,                                0.0,                                1.0);
-}
-
-highp vec2 raySphereIntersect(highp vec3 r0, highp vec3 rd, highp vec3 s0, highp float sr) {
-  // - r0: ray origin
-  // - rd: ray direction
-  // - s0: sphere center
-  // - sr: sphere radius
-  // - Returns distance intersecion with sphere,
-  //   or -1.0 if no intersection.
-  highp float a = dot(rd, rd);
-  highp vec3 s0_r0 = r0 - s0;
-  highp float b = 2.0 * dot(rd, s0_r0);
-  highp float c = dot(s0_r0, s0_r0) - (sr * sr);
-  
-  highp float sq = b*b - 4.0*a*c;
-  
-  if (sq < 0.0) {
-    return vec2(-1.0, -1.0);
-  }
-  
-  sq = sqrt(b*b - 4.0*a*c);
-  highp float s1 = (-b - sq)/(2.0*a);
-  highp float s2 = (-b + sq)/(2.0*a);
-
-  return vec2(min(s1,s2), max(s1,s2));
-}
-
-
-highp mat3 getChangeOfBasis(in highp vec3 pa, in  highp vec3 pb,
-                            out  highp float x0,
-                            out  highp float x1,
-                            out  highp float y0){
-  
-  highp float tol = 20000.0;
-  
-  //if (abs(pa.y - pa.b) > tol && abs(pa.z + pb.z) < tol){
-  //	errorColor.g = 1.0;
-  //}
-  
-  
-  highp vec3 d = normalize(pb - pa);
-  highp vec3 c = normalize(pa + (dot(-pa,d)*d));
-  
-  //Change of basis to 2D formula
-  highp mat3 m;
-  m[0] = d;
-  m[1] = c;
-  m[2] = cross(c,d);
-  
-  //m = transpose(m);
-  highp mat3 m2;
-  m2[0][0] = m[0][0];
-  m2[0][1] = m[1][0];
-  m2[0][2] = m[2][0];
-  
-  m2[1][0] = m[0][1];
-  m2[1][1] = m[1][1];
-  m2[1][2] = m[2][1];
-  
-  m2[2][0] = m[0][2];
-  m2[2][1] = m[1][2];
-  m2[2][2] = m[2][2];
-  m = m2;
-
-  highp vec3 mpa = m * pa;
-  highp vec3 mpb = m * pb;
-  
-  if (abs(mpa.z) > tol || abs(mpa.y - mpb.y) > tol){ //Checking
-    x0 = x1 = y0 = 0.0;
-    //errorColor = vec4(1.0, 0.0, 0.0, 1.0);
-    return m; //Error
-  }
-  
-  x0 = min(mpa.x, mpb.x);
-  x1 = max(mpa.x, mpb.x);
-  y0 = abs(mpa.y);
-  
-  if (x0 > 0.0){ //All rays should start from negative X
-    float aux = x0;
-    x0 = -x1;
-    x1 = -aux;
-  }
-  
-  //if (abs(length(pb-pa) - (x1-x0)) > tol){ 	errorColor.r = 1.0;}
-  //if (x0 > 0.0 || x1 < x0){ 	errorColor.r = 1.0;}
-  
-  //if (x0 <0.0 && x1 > 0.0 && abs(x0+x1) > 10.0){	errorColor.g = 1.0;}
-  
-  //if (x1 > 0.0) errorColor.b = 1.0;
-  
-  return m;
-}
-
-float sampledXFor5Samples(float x0, float x1, int n){
-  
-  //if (x0 > 0.0 || x0 > x1) errorColor.g = 1.0;
-  
-  float d = x1-x0;
-  if (x1 <= 0.0){
-    
-    //errorColor.b = 1.0;
-    if (n == 0) return x0;
-    if (n == 1) return x0 + d * 0.0321;
-    if (n == 2) return x0 + d * 0.1192;
-    if (n == 3) return x0 + d * 0.3561;
-    if (n == 4) return x1;
-  } else{
-    
-    //Only for external points of view
-    //if (abs(x0+x1) > 10000.0) errorColor.g = 1.0; //Centered in 0
-    
-    if (n == 0) return d * -0.5;
-    if (n == 1) return d * -0.1192;
-    if (n == 2) return 0.0;
-    if (n == 3) return d * 0.1192;
-    if (n == 4) return d * 0.5;
-  }
-  
-  return -1.0e10;
-}
-
 highp mat3 rayTo2D(in highp vec3 pa, in  highp vec3 pb){
   
   highp mat3 m;
@@ -184,7 +52,7 @@ highp mat3 rayTo2D(in highp vec3 pa, in  highp vec3 pb){
     m = mat3(m[0][0], m[1][0], m[2][0],
              m[0][1], m[1][1], m[2][1],
              m[0][2], m[1][2], m[2][2]);
-             
+    
   }
   
   return m;
@@ -223,10 +91,10 @@ vec2 earthShadow2D(highp float Y0, highp mat3 m, vec3 sunDir){
 // [atm1, shadow1, 0, 0] || [atm1, shadow1, shadow2, atm2] ||
 // [0,0,0,0]
 highp vec4 getRay2DEnds(vec2 p1, vec2 p2,
-                  mat3 m, vec3 sunDir,
-                  out bool atm,
-                  out bool earth,
-                  out bool shadow){
+                        mat3 m, vec3 sunDir,
+                        out bool atm,
+                        out bool earth,
+                        out bool shadow){
   
   //Intersection atm.
   highp float atm1 = -sqrt(1.0 - p1.y*p1.y);
@@ -430,7 +298,7 @@ void calculateScatteringFactorsAndXs(vec3 sunDir,
 
 float getAtmWavelengthIntensity(highp float gScale4PiKw4){
   
-  return 1.0; //TODO
+  //return 1.0; //TODO
   
   //Integrating
   highp float intensity = 0.0;
@@ -455,9 +323,11 @@ float getAtmWavelengthIntensity(highp float gScale4PiKw4){
 
 void main() {
   
+  highp vec3 rayDir = normalize(rayDirirection);
+  
   //Initial points at normal mini-scale
   highp vec3 p1 = uCameraPosition/atmRadius;
-  highp vec3 p2 = (uCameraPosition + normalize(rayDir)*1e10)/atmRadius;
+  highp vec3 p2 = (uCameraPosition + rayDir*1e10)/atmRadius;
   highp mat3 m = rayTo2D(p1, p2);
   
   highp vec2 mp1 = (m * p1).xy;
@@ -475,10 +345,10 @@ void main() {
   bool earth;
   bool shadow;
   highp vec4 ends = getRay2DEnds(mp1, mp2,
-                           m, currentSunDir,
-                           atm,
-                           earth,
-                           shadow);
+                                 m, currentSunDir,
+                                 atm,
+                                 earth,
+                                 shadow);
   
   
   //vec4 bgColor = getBackgroundColor(uCameraPosition, rayDir, currentSunDir, fragCoord);
