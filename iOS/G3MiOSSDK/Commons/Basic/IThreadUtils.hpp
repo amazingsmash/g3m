@@ -10,6 +10,7 @@
 #define __G3MiOSSDK__IThreadUtils__
 
 #include <stdlib.h>
+#include "TimeInterval.hpp"
 
 class G3MContext;
 class GTask;
@@ -50,6 +51,11 @@ public:
 
   void invokeAsyncTask(GAsyncTask* task,
                        bool autodelete) const;
+  
+  virtual void invokeAfterInRendererThread(
+                                   const TimeInterval& time,
+                                   GTask* task,
+                                   bool autoDelete) const = 0;
   
 };
 

@@ -943,6 +943,7 @@ void G3MWidget::setAnimatedCameraPosition(const TimeInterval& interval,
                                           const Angle& toPitch,
                                           const bool linearTiming,
                                           const bool linearHeight) {
+  
 
   if (fromPosition.isEquals(toPosition) &&
       fromHeading.isEquals(toHeading) &&

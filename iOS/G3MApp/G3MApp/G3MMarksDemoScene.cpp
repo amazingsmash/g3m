@@ -55,9 +55,12 @@ public:
 
           const JSONObject* city = list->getAsObject(i);
           const JSONObject* coords = city->getAsObject("coord");
-          const Geodetic3D position = Geodetic3D::fromDegrees(coords->getAsNumber("lat")->value(),
-                                                              coords->getAsNumber("lon")->value(),
-                                                              0);
+          const JSONNumber* lat = coords->getAsNumber("Lat");
+          double latD = lat->value();
+          const JSONNumber* lon = coords->getAsNumber("Lon");
+          double lonD = lon->value();
+          const Geodetic3D position = (coords != NULL)? Geodetic3D::fromDegrees(latD, lonD,
+                                                                                0) : Geodetic3D::fromDegrees(0.0, 0.0, 0.0);
           const JSONArray* weather = city->getAsArray("weather");
           const JSONObject* weatherObject = weather->getAsObject(0);
 
@@ -73,7 +76,7 @@ public:
           }
 
           Mark* mark = new Mark(city->getAsString("name", ""),
-                                URL("http://openweathermap.org/img/w/" + icon),
+                                URL("http://api.openweathermap.org/img/w/" + icon),
                                 position,
                                 RELATIVE_TO_GROUND,
                                 0,                              // minDistanceToCamera
@@ -127,7 +130,7 @@ void G3MMarksDemoScene::rawActivate(const G3MContext* context) {
 
   IDownloader* downloader = context->getDownloader();
 
-  _requestID = downloader->requestBuffer(URL("http://openweathermap.org/data/2.5/box/city?bbox=-80,-180,80,180,4&cluster=yes&appid=e1079e4aa327b6cf16aa5b68d47ed1e2"),
+  _requestID = downloader->requestBuffer(URL("http://api.openweathermap.org/data/2.5/box/city?bbox=-80,-180,80,180,4&cluster=yes&appid=e1079e4aa327b6cf16aa5b68d47ed1e2"),
                                          DownloadPriority::HIGHEST,
                                          TimeInterval::fromHours(1),
                                          true,

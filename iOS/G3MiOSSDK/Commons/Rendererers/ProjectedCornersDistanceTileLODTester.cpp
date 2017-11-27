@@ -98,6 +98,10 @@ bool ProjectedCornersDistanceTileLODTester::PvtData::evaluate(const Camera* came
 //      (_tileColumn == 4 || _tileColumn == 5)) {
 //    printf("break on me\n");
 //  }
+  
+  texHeightSquared /= 8;
+  texWidthSquared /= 8;
+  
 
   const double distanceInPixelsNorth = camera->getEstimatedPixelDistance(_northWestPoint, _northEastPoint);
   const double distanceInPixelsSquaredArcNorth = (distanceInPixelsNorth * distanceInPixelsNorth) * _northArcSegmentRatioSquared;

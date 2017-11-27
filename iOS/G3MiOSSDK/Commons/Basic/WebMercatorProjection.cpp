@@ -69,7 +69,7 @@ const Angle WebMercatorProjection::getInnerPointLatitude(double v) const {
   const IMathUtils* mu = IMathUtils::instance();
 
   const double exp = mu->exp(-2 * PI * (1.0 - v - 0.5));
-  const double atan = mu->atan(exp + PI);
+  const double atan = mu->atan(exp);
   return Angle::fromRadians((PI / 2) - 2 * atan);
 }
 

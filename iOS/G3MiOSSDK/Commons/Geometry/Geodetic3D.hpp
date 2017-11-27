@@ -80,6 +80,7 @@ public:
   Geodetic2D asGeodetic2D() const;
 
   const std::string description() const;
+  const std::string descriptionCode() const;
 #ifdef JAVA_CODE
   @Override
   public String toString() {

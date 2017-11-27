@@ -161,7 +161,7 @@ void BusyMeshRenderer::render(const G3MRenderContext* rc,
 
   Mesh* mesh = getMesh(rc);
   if (mesh != NULL) {
-    mesh->render(rc, _glState);
+  //  mesh->render(rc, _glState);
   }
 }
 

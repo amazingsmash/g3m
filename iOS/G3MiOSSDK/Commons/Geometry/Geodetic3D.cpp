@@ -39,6 +39,20 @@ const std::string Geodetic3D::description() const {
   return s;
 }
 
+const std::string Geodetic3D::descriptionCode() const {
+  IStringBuilder* isb = IStringBuilder::newStringBuilder();
+  isb->addString("Geodetic3D::fromDegrees(");
+  isb->addDouble(_latitude._degrees);
+  isb->addString(", ");
+  isb->addDouble(_longitude._degrees);
+  isb->addString(", ");
+  isb->addDouble(_height);
+  isb->addString(")");
+  const std::string s = isb->getString();
+  delete isb;
+  return s;
+}
+
 bool Geodetic3D::isEquals(const Geodetic3D& that) const {
   return (_latitude.isEquals(that._latitude)   &&
           _longitude.isEquals(that._longitude) &&

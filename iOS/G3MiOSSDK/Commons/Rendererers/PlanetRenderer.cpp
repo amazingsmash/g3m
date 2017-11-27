@@ -882,6 +882,9 @@ bool PlanetRenderer::onTouchEvent(const G3MEventContext* ec,
         ILogger::instance()->logInfo("Camera zNear=%f zFar=%f",
                                      _lastCamera->getFrustumData()->_zNear,
                                      _lastCamera->getFrustumData()->_zFar);
+        
+        
+        ILogger::instance()->logInfo("-----\n %s", _lastCamera->getGeodeticPosition().descriptionCode().c_str());
 
         if (_texturizer->onTerrainTouchEvent(ec, position, tile, _layerSet)) {
           return true;

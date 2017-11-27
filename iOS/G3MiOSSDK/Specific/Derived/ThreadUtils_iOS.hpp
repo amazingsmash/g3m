@@ -57,6 +57,20 @@ public:
                      }
                    });
   }
+  
+  void invokeAfterInRendererThread(
+                              const TimeInterval& time,
+                              GTask* task,
+                              bool autoDelete) const {
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time.seconds() * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+      task->run(_context);
+      if (autoDelete) {
+        delete task;
+      }
+    });
+  }
+
 
   void invokeInBackground(GTask* task,
                           bool autoDelete) const {
