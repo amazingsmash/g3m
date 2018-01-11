@@ -27,6 +27,8 @@ public class Camera
      _timestamp = timestamp;
      _viewPortWidth = -1;
      _viewPortHeight = -1;
+     _fixedZNear = Double.NaN;
+     _fixedZFar = Double.NaN;
     resizeViewport(0, 0);
     _dirtyFlags.setAllDirty();
   }
@@ -72,6 +74,9 @@ public class Camera
       _dirtyFlags.copyFrom(that._dirtyFlags);
   
       _frustumData = that._frustumData;
+  
+      _fixedZNear = that._fixedZNear;
+      _fixedZFar = that._fixedZFar;
   
       _projectionMatrix.copyValue(that._projectionMatrix);
       _modelMatrix.copyValue(that._modelMatrix);
@@ -390,6 +395,10 @@ public class Camera
     if (_geodeticPosition == null)
     {
       _geodeticPosition = new Geodetic3D(_planet.toGeodetic3D(getCartesianPosition()));
+      if (_geodeticPosition.isNan())
+      {
+        throw new RuntimeException("Camera logic error, invalid _geodeticPosition");
+      }
     }
     return _geodeticPosition;
   }
@@ -689,16 +698,17 @@ public class Camera
 
   public final void setFixedFrustum(double zNear, double zFar)
   {
+    _timestamp++;
+    _fixedZNear = zNear;
+    _fixedZFar = zFar;
     _dirtyFlags.setAllDirty();
-  
-    if (_frustumData != null)
-       _frustumData.dispose();
-    _frustumData = calculateFrustumData(zNear, zFar);
-    _dirtyFlags._frustumDataDirty = false;
   }
 
   public final void resetFrustumPolicy()
   {
+    _timestamp++;
+    _fixedZNear = Double.NaN;
+    _fixedZFar = Double.NaN;
     _dirtyFlags.setAllDirty();
   }
 
@@ -767,6 +777,9 @@ public class Camera
   private Frustum _frustumInModelCoordinates;
   private double _tanHalfVerticalFOV;
   private double _tanHalfHorizontalFOV;
+
+  private double _fixedZNear;
+  private double _fixedZFar;
 
   //The Camera Effect Target
   private static class CameraEffectTarget implements EffectTarget
@@ -842,9 +855,20 @@ public class Camera
 
   private FrustumData calculateFrustumData()
   {
-    final Vector2D zNearAndZFar = _frustumPolicy.calculateFrustumZNearAndZFar(this);
-    final double zNear = zNearAndZFar._x;
-    final double zFar = zNearAndZFar._y;
+    double zNear;
+    double zFar;
+  
+    if ((_fixedZNear != _fixedZNear) || (_fixedZFar != _fixedZFar))
+    {
+      final Vector2D zNearAndZFar = _frustumPolicy.calculateFrustumZNearAndZFar(this);
+      zNear = (_fixedZNear != _fixedZNear) ? zNearAndZFar._x : _fixedZNear;
+      zFar = (_fixedZFar != _fixedZFar) ? zNearAndZFar._y : _fixedZFar;
+    }
+    else
+    {
+      zNear = _fixedZNear;
+      zFar = _fixedZFar;
+    }
   
     return calculateFrustumData(zNear, zFar);
   }

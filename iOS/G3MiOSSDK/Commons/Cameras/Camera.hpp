@@ -382,6 +382,9 @@ private:
   MutableMatrix44D* _forcedProjectionMatrix;
   MutableMatrix44D* _forcedModelMatrix;
 
+  double _fixedZNear;
+  double _fixedZFar;
+
   //The Camera Effect Target
   class CameraEffectTarget: public EffectTarget {
   public:

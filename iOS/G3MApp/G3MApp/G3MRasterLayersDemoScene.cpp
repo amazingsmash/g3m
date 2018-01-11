@@ -193,6 +193,7 @@ void G3MRasterLayersDemoScene::createLayerSet(LayerSet* layerSet) {
 
 
 void G3MRasterLayersDemoScene::rawActivate(const G3MContext* context) {
+
 #warning JM at work!
   PlanetRenderer* planetRenderer = getModel()->getPlanetRenderer();
   //planetRenderer->setShowStatistics(true);
@@ -272,6 +273,7 @@ void G3MRasterLayersDemoScene::rawActivate(const G3MContext* context) {
                                                         false, /* readExpired */
                                                         0      /* deltaHeight */) );
   planetRenderer->setVerticalExaggeration(2.5);
+
 }
 
 void G3MRasterLayersDemoScene::rawSelectOption(const std::string& option,

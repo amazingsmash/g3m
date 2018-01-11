@@ -24,6 +24,7 @@
 #include "IFloatBuffer.hpp"
 #include "FrustumPolicy.hpp"
 #include "FrustumData.hpp"
+#include "ErrorHandling.hpp"
 
 
 void Camera::initialize(const G3MContext* context) {
@@ -80,6 +81,9 @@ void Camera::copyFrom(const Camera& that,
 #ifdef JAVA_CODE
     _frustumData = that._frustumData;
 #endif
+
+    _fixedZNear = that._fixedZNear;
+    _fixedZFar  = that._fixedZFar;
 
     _projectionMatrix.copyValue(that._projectionMatrix);
     _modelMatrix.copyValue(that._modelMatrix);
@@ -155,7 +159,9 @@ _timestamp(timestamp),
 _viewPortWidth(-1),
 _viewPortHeight(-1),
 _forcedProjectionMatrix(NULL),
-_forcedModelMatrix(NULL)
+_forcedModelMatrix(NULL),
+_fixedZNear(NAND),
+_fixedZFar(NAND)
 {
   resizeViewport(0, 0);
   _dirtyFlags.setAllDirty();
@@ -405,9 +411,18 @@ void Camera::setPointOfView(const Geodetic3D& center,
 }
 
 FrustumData* Camera::calculateFrustumData() const {
-  const Vector2D zNearAndZFar = _frustumPolicy->calculateFrustumZNearAndZFar(*this);
-  const double zNear = zNearAndZFar._x;
-  const double zFar  = zNearAndZFar._y;
+  double zNear;
+  double zFar;
+
+  if ( ISNAN(_fixedZNear) || ISNAN(_fixedZFar) ) {
+    const Vector2D zNearAndZFar = _frustumPolicy->calculateFrustumZNearAndZFar(*this);
+    zNear = ISNAN(_fixedZNear) ? zNearAndZFar._x : _fixedZNear;
+    zFar  = ISNAN(_fixedZFar)  ? zNearAndZFar._y : _fixedZFar;
+  }
+  else {
+    zNear = _fixedZNear;
+    zFar  = _fixedZFar;
+  }
 
   return calculateFrustumData(zNear, zFar);
 }
@@ -612,6 +627,9 @@ const double Camera::getGeodeticHeight() const {
 const Geodetic3D Camera::getGeodeticPosition() const {
   if (_geodeticPosition == NULL) {
     _geodeticPosition = new Geodetic3D( _planet->toGeodetic3D(getCartesianPosition()) );
+    if (_geodeticPosition->isNan()) {
+      THROW_EXCEPTION("Camera logic error, invalid _geodeticPosition");
+    }
   }
   return *_geodeticPosition;
 }
@@ -736,14 +754,16 @@ const MutableMatrix44D& Camera::getProjectionMatrix() const {
 
 void Camera::setFixedFrustum(const double zNear,
                              const double zFar) {
+  _timestamp++;
+  _fixedZNear = zNear;
+  _fixedZFar  = zFar;
   _dirtyFlags.setAllDirty();
-
-  delete _frustumData;
-  _frustumData = calculateFrustumData(zNear, zFar);
-  _dirtyFlags._frustumDataDirty = false;
 }
 
 void Camera::resetFrustumPolicy() {
+  _timestamp++;
+  _fixedZNear = NAND;
+  _fixedZFar  = NAND;
   _dirtyFlags.setAllDirty();
 }
 

@@ -29,10 +29,9 @@
 #include "Geodetic3D.hpp"
 #include "GLState.hpp"
 
-
-MeshRenderer::MeshRenderer(bool checkVisibility):
-_glState(new GLState()),
-_checkVisibility(checkVisibility)
+MeshRenderer::MeshRenderer(bool visibilityCulling):
+_visibilityCulling(visibilityCulling),
+_glState(new GLState())
 {
   _context = NULL;
 }
@@ -76,15 +75,22 @@ void MeshRenderer::render(const G3MRenderContext* rc, GLState* glState) {
     const Camera* camera =  rc->getCurrentCamera();
 
     updateGLState(camera);
-
-    const Frustum* frustum = camera->getFrustumInModelCoordinates();
-
     _glState->setParent(glState);
 
-    for (size_t i = 0; i < meshesCount; i++) {
-      Mesh* mesh = _meshes[i];
-      const BoundingVolume* boundingVolume = mesh->getBoundingVolume();
-      if (!_checkVisibility || (boundingVolume == NULL) || boundingVolume->touchesFrustum(frustum) ) {
+    if (_visibilityCulling) {
+      const Frustum* frustum = camera->getFrustumInModelCoordinates();
+
+      for (size_t i = 0; i < meshesCount; i++) {
+        Mesh* mesh = _meshes[i];
+        const BoundingVolume* boundingVolume = mesh->getBoundingVolume();
+        if ( (boundingVolume == NULL) || boundingVolume->touchesFrustum(frustum) ) {
+          mesh->render(rc, _glState);
+        }
+      }
+    }
+    else {
+      for (size_t i = 0; i < meshesCount; i++) {
+        Mesh* mesh = _meshes[i];
         mesh->render(rc, _glState);
       }
     }

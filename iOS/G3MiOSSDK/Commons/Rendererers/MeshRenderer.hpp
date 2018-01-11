@@ -95,6 +95,7 @@ private:
   };
 
 
+  bool _visibilityCulling;
 
   std::vector<Mesh*> _meshes;
 
@@ -123,7 +124,7 @@ private:
 
 public:
 
-  MeshRenderer(bool checkVisibility);
+  MeshRenderer(bool visibilityCulling=true);
 
   ~MeshRenderer();
 

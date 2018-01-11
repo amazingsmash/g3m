@@ -14,6 +14,7 @@
 #include "Angle.hpp"
 #include "InfoDisplay.hpp"
 #include "ViewMode.hpp"
+#include "FrustumPolicyHandler.hpp"
 
 class IMathUtils;
 class ILogger;
@@ -85,8 +86,7 @@ public:
     }
 };
 
-
-class G3MWidget : public ChangedRendererInfoListener {
+class G3MWidget : public ChangedRendererInfoListener, FrustumPolicyHandler {
 public:
     
     static void initSingletons(ILogger*            logger,
@@ -143,14 +143,6 @@ public:
         return _gl;
     }
     
-    EffectsScheduler* getEffectsScheduler() const {
-        return _effectsScheduler;
-    }
-    
-    const Camera* getCurrentCamera() const {
-        return _currentCamera;
-    }
-    
     Camera* getNextCamera() const {
         return _nextCamera;
     }
@@ -162,6 +154,128 @@ public:
         if (_userData != NULL) {
             _userData->setWidget(this);
         }
+    }
+    
+    //<<<<<<< HEAD
+    //
+    //    EffectsScheduler* getEffectsScheduler() const {
+    //        return _effectsScheduler;
+    //    }
+    //
+    //    const Camera* getCurrentCamera() const {
+    //        return _currentCamera;
+    //    }
+    //
+    //    Camera* getNextCamera() const {
+    //        return _nextCamera;
+    //    }
+    //
+    //    void setUserData(WidgetUserData* userData) {
+    //        delete _userData;
+    //
+    //        _userData = userData;
+    //        if (_userData != NULL) {
+    //            _userData->setWidget(this);
+    //        }
+    //    }
+    //
+    //    WidgetUserData* getUserData() const {
+    //        return _userData;
+    //    }
+    //
+    //    void addPeriodicalTask(PeriodicalTask* periodicalTask);
+    //
+    //    void addPeriodicalTask(const TimeInterval& interval,
+    //                           GTask* task);
+    //
+    //    void resetPeriodicalTasksTimeouts();
+    //
+    //    void setCameraPosition(const Geodetic3D& position);
+    //
+    //    void setCameraHeading(const Angle& heading);
+    //
+    //    void setCameraPitch(const Angle& pitch);
+    //
+    //    void setCameraRoll(const Angle& roll);
+    //
+    //    void setCameraHeadingPitchRoll(const Angle& heading,
+    //                                   const Angle& pitch,
+    //                                   const Angle& roll);
+    //
+    //    void setAnimatedCameraPosition(const Geodetic3D& position,
+    //                                   const Angle& heading = Angle::zero(),
+    //                                   const Angle& pitch   = Angle::fromDegrees(-90));
+    //
+    //    void setAnimatedCameraPosition(const TimeInterval& interval,
+    //                                   const Geodetic3D& position,
+    //                                   const Angle& heading = Angle::zero(),
+    //                                   const Angle& pitch   = Angle::fromDegrees(-90),
+    //                                   const bool linearTiming = false,
+    //                                   const bool linearHeight = false);
+    //
+    //    void setAnimatedCameraPosition(const TimeInterval& interval,
+    //                                   const Geodetic3D& fromPosition,
+    //                                   const Geodetic3D& toPosition,
+    //                                   const Angle& fromHeading,
+    //                                   const Angle& toHeading,
+    //                                   const Angle& fromPitch,
+    //                                   const Angle& toPitch,
+    //                                   const bool linearTiming  = false,
+    //                                   const bool linearHeight  = false);
+    //
+    //    void cancelCameraAnimation();
+    //
+    //    void cancelAllEffects();
+    //
+    //    CameraRenderer* getCameraRenderer() const {
+    //        return _cameraRenderer;
+    //    }
+    //
+    //    Renderer* getHUDRenderer() const {
+    //        return _hudRenderer;
+    //    }
+    //
+    //    const G3MContext* getG3MContext() const {
+    //        return _context;
+    //    }
+    //
+    //    void setBackgroundColor(const Color& backgroundColor);
+    //    Color getBackgroundColor() const;
+    //
+    //    PlanetRenderer* getPlanetRenderer();
+    //
+    //    bool setRenderedSector(const Sector& sector);
+    //
+    //    void setForceBusyRenderer(bool forceBusyRenderer) {
+    //        _forceBusyRenderer = forceBusyRenderer;
+    //    }
+    //
+    //    //void notifyChangedInfo() const;
+    //
+    //    void setInfoDisplay(InfoDisplay* infoDisplay) {
+    //        _infoDisplay = infoDisplay;
+    //    }
+    //
+    //    InfoDisplay*  getInfoDisplay() const {
+    //        return _infoDisplay;
+    //    }
+    //
+    //    void changedRendererInfo(const size_t rendererID,
+    //                             const std::vector<const Info*>& info);
+    //
+    //    void removeAllPeriodicalTasks();
+    //
+    //    void setViewMode(ViewMode viewMode);
+    //
+    //    RenderState* getRenderState() const{
+    //        return _rendererState;
+    //    }
+    //
+    //=======
+    //  }
+    
+    RenderState* getRenderState() const{
+        return _rendererState;
     }
     
     WidgetUserData* getUserData() const {
@@ -252,9 +366,10 @@ public:
     
     void setViewMode(ViewMode viewMode);
     
-    RenderState* getRenderState() const{
-        return _rendererState;
-    }
+    void changeToFixedFrustum(double zNear,
+                              double zFar);
+    
+    void resetFrustumPolicy();
     
 private:
     IStorage*                _storage;
