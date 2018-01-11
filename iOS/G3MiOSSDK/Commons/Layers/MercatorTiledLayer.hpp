@@ -11,6 +11,9 @@
 
 #include "RasterLayer.hpp"
 #include "Sector.hpp"
+#include "Vector2D.hpp"
+#include "LayerTilesRenderParameters.hpp"
+
 
 
 class MercatorTiledLayer : public RasterLayer {
@@ -51,7 +54,8 @@ public:
                      const bool                      isTransparent  = false,
                      const float                     transparency   = 1,
                      const LayerCondition*           condition      = NULL,
-                     std::vector<const Info*>*       layerInfo      = new std::vector<const Info*>());
+                     std::vector<const Info*>*       layerInfo      = new std::vector<const Info*>(),
+                     const Vector2S&                 tileMeshResolution = LayerTilesRenderParameters::defaultTileMeshResolution());
 
   URL getFeatureInfoURL(const Geodetic2D& position,
                         const Sector& sector) const;

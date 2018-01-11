@@ -32,6 +32,15 @@ CoordinateSystem CoordinateSystem::fromCamera(const Camera& camera) {
   const Vector3D up            = camera.getUp();
   const Vector3D origin        = camera.getCartesianPosition();
 
+  return CoordinateSystem(viewDirection.cross(up).normalized(), //This is not orthogonal (right hand rule)
+                          viewDirection.normalized(),
+                          up.normalized(),
+                          origin);
+}
+
+CoordinateSystem CoordinateSystem::forCamera(const Vector3D& viewDirection,
+                                             const Vector3D& up,
+                                             const Vector3D& origin) {
   return CoordinateSystem(viewDirection.cross(up).normalized(),
                           viewDirection.normalized(),
                           up.normalized(),
@@ -56,7 +65,7 @@ _z(z.normalized()),
 _origin(origin)
 {
   if (!checkConsistency(x, y, z)) {
-    THROW_EXCEPTION("Inconsistent CoordinateSystem created.");
+   // THROW_EXCEPTION("Inconsistent CoordinateSystem created.");
   }
 }
 

@@ -146,6 +146,11 @@ public:
   TileLODTester* getTileLODTester();
 
   TileVisibilityTester* getTileVisibilityTester();
+  
+  void setTileVisibilityTester(TileVisibilityTester* tvt){
+    _tileVisibilityTester = tvt;
+  }
+
 
 };
 

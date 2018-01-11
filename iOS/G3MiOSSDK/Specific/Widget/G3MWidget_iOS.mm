@@ -144,6 +144,10 @@
 
 }
 
+-(void) forceDrawView{
+  [_renderer render: [self widget]];
+}
+
 - (void)drawView:(id)sender {
   if (_animating) {
     /*int timeToRedraw = */[_renderer render: [self widget]];

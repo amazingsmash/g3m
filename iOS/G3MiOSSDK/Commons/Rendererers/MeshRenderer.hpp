@@ -118,10 +118,12 @@ private:
                          bool                deleteListener,
                          bool                isBSON,
                          const MeshType      meshType);
+    
+    bool _checkVisibility;
 
 public:
 
-  MeshRenderer();
+  MeshRenderer(bool checkVisibility);
 
   ~MeshRenderer();
 

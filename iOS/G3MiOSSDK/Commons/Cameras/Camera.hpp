@@ -1,4 +1,4 @@
-﻿/*
+/*
  *  Camera.hpp
  *  Prueba Opengl iPad
  *
@@ -304,6 +304,10 @@ public:
                        const double zFar);
 
   void resetFrustumPolicy();
+  
+  void setForcedProjectionMatrix(const MutableMatrix44D& m);
+  
+  void setForcedModelMatrix(const MutableMatrix44D& m);
 
 private:
 
@@ -374,6 +378,9 @@ private:
   mutable Frustum*         _frustumInModelCoordinates;
   mutable double           _tanHalfVerticalFOV;
   mutable double           _tanHalfHorizontalFOV;
+  
+  MutableMatrix44D* _forcedProjectionMatrix;
+  MutableMatrix44D* _forcedModelMatrix;
 
   //The Camera Effect Target
   class CameraEffectTarget: public EffectTarget {
@@ -426,6 +433,11 @@ private:
 
   // Model matrix, computed in CPU in double precision
   const MutableMatrix44D& getModelMatrix() const {
+    
+//    if (_forcedModelMatrix != NULL){
+//      return *_forcedModelMatrix;
+//    }
+    
     if (_dirtyFlags._modelMatrixDirty) {
       _dirtyFlags._modelMatrixDirty = false;
       _modelMatrix.copyValue(MutableMatrix44D::createModelMatrix(_position, _center, _up));
@@ -435,12 +447,21 @@ private:
 
   // multiplication of model * projection
   const MutableMatrix44D& getModelViewMatrix() const {
-    if (_dirtyFlags._modelViewMatrixDirty) {
-      _dirtyFlags._modelViewMatrixDirty = false;
-      _modelViewMatrix.copyValueOfMultiplication(getProjectionMatrix(), getModelMatrix());
+
+      if (_dirtyFlags._modelViewMatrixDirty) {
+        _dirtyFlags._modelViewMatrixDirty = false;
+        _modelViewMatrix.copyValueOfMultiplication(getProjectionMatrix(), getModelMatrix());
+      }
+    
+    //Overriding result
+    if (_forcedModelMatrix != NULL && _forcedProjectionMatrix != NULL){
+      _modelViewMatrix.copyValue(_forcedProjectionMatrix->multiply(*_forcedModelMatrix));
     }
+    
     return _modelViewMatrix;
   }
+  
+  
   
 };
 

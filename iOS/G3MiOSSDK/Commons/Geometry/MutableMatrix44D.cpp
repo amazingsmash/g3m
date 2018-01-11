@@ -95,6 +95,7 @@ const std::string MutableMatrix44D::description() const {
   isb->addString("MUTABLE MATRIX 44D: ");
   float* f = asMatrix44D()->getColumnMajorFloatArray();
   for (int i = 0; i < 16; i++) {
+    if (i % 4 == 0) isb->addString("\n");
     isb->addDouble(f[i]);
     if (i < 15) isb->addString(", ");
   }

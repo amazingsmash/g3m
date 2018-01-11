@@ -715,7 +715,7 @@ G3MWidget* IG3MBuilder::create() {
 
 
   Sector shownSector = getShownSector();
-  getPlanetRendererBuilder()->setRenderedSector(shownSector); //Shown sector
+//  getPlanetRendererBuilder()->setRenderedSector(shownSector); //Shown sector
 
 #warning HUDRenderer doesn't work when this code is uncommented
   InfoDisplay* infoDisplay = NULL;
@@ -911,7 +911,7 @@ Sector IG3MBuilder::getShownSector() const {
 }
 
 MeshRenderer* IG3MBuilder::createMeshRenderer() {
-  MeshRenderer* meshRenderer = new MeshRenderer();
+  MeshRenderer* meshRenderer = new MeshRenderer(true);
   addRenderer(meshRenderer);
   return meshRenderer;
 }

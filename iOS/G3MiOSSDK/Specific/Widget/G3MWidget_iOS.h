@@ -28,7 +28,7 @@ class WidgetUserData;
 @private
   BOOL _displayLinkSupported;
 
-  TouchEvent* _lastTouchEvent;
+  TouchEvent* _lastTouchEvent; //class TouchEvent
 
   void* _widgetVP;
 }
@@ -70,5 +70,7 @@ class WidgetUserData;
 - (void)cancelCameraAnimation;
 
 - (WidgetUserData*) userData;
+
+- (void) forceDrawView;
 
 @end

@@ -13,6 +13,8 @@
 
 #include "RCObject.hpp"
 
+#include "IStringBuilder.hpp"
+
 class Matrix44D: public RCObject {
 private:
   ~Matrix44D();
@@ -98,6 +100,20 @@ public:
   bool isScaleMatrix() const;
 
   bool isTranslationMatrix() const;
+  
+  const std::string description() const {
+    IStringBuilder* isb = IStringBuilder::newStringBuilder();
+    isb->addString("MUTABLE MATRIX 44D: ");
+    float* f = getColumnMajorFloatArray();
+    for (int i = 0; i < 16; i++) {
+      if (i % 4 == 0) isb->addString("\n");
+      isb->addDouble(f[i]);
+      if (i < 15) isb->addString(", ");
+    }
+    const std::string s = isb->getString();
+    delete isb;
+    return s;
+  }
 
 };
 

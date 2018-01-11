@@ -188,7 +188,7 @@ Vector3D Vector3D::projectionInPlane(const Vector3D& normal) const {
   const Vector3D projected = normal.transformedBy(m, 0).normalized();
   return projected.times(this->length());
 }
-
+//Equivalent to M x V
 Vector3D Vector3D::transformedBy(const MutableMatrix44D& m,
                                  const double homogeneus) const {
   //int __TODO_move_to_matrix;

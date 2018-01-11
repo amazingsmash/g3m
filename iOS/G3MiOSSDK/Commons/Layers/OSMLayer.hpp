@@ -36,7 +36,8 @@ public:
            const int           initialLevel = 2,
            const float         transparency = 1,
            LayerCondition*     condition    = NULL,
-           std::vector<const Info*>*  layerInfo = new std::vector<const Info*>()) :
+           std::vector<const Info*>*  layerInfo = new std::vector<const Info*>(),
+           const Vector2S&  tileMeshResolution = LayerTilesRenderParameters::defaultTileMeshResolution()) :
   MercatorTiledLayer("http://",
                      "tile.openstreetmap.org",
                      getSubdomains(),
@@ -48,7 +49,8 @@ public:
                      false, // isTransparent
                      transparency,
                      condition,
-                     layerInfo)
+                     layerInfo,
+                     tileMeshResolution)
   {
   }
 

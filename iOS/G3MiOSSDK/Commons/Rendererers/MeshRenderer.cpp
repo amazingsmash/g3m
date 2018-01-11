@@ -30,8 +30,9 @@
 #include "GLState.hpp"
 
 
-MeshRenderer::MeshRenderer():
-_glState(new GLState())
+MeshRenderer::MeshRenderer(bool checkVisibility):
+_glState(new GLState()),
+_checkVisibility(checkVisibility)
 {
   _context = NULL;
 }
@@ -83,7 +84,7 @@ void MeshRenderer::render(const G3MRenderContext* rc, GLState* glState) {
     for (size_t i = 0; i < meshesCount; i++) {
       Mesh* mesh = _meshes[i];
       const BoundingVolume* boundingVolume = mesh->getBoundingVolume();
-      if ( (boundingVolume == NULL) || boundingVolume->touchesFrustum(frustum) ) {
+      if (!_checkVisibility || (boundingVolume == NULL) || boundingVolume->touchesFrustum(frustum) ) {
         mesh->render(rc, _glState);
       }
     }

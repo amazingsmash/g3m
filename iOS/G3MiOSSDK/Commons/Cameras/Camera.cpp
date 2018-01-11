@@ -48,6 +48,8 @@ Camera::~Camera() {
   delete _geodeticPosition;
   delete _frustumPolicy;
   delete _frustumData;
+  delete _forcedProjectionMatrix;
+  delete _forcedModelMatrix;
 }
 
 void Camera::copyFrom(const Camera& that,
@@ -120,6 +122,9 @@ void Camera::copyFrom(const Camera& that,
 
     _tanHalfVerticalFOV   = that._tanHalfVerticalFOV;
     _tanHalfHorizontalFOV = that._tanHalfHorizontalFOV;
+    
+    _forcedProjectionMatrix =_forcedProjectionMatrix == NULL? NULL : new MutableMatrix44D(*_forcedProjectionMatrix);
+    _forcedModelMatrix =_forcedModelMatrix == NULL? NULL : new MutableMatrix44D(*_forcedModelMatrix);
   }
 
 }
@@ -148,7 +153,9 @@ _tanHalfVerticalFOV(NAND),
 _tanHalfHorizontalFOV(NAND),
 _timestamp(timestamp),
 _viewPortWidth(-1),
-_viewPortHeight(-1)
+_viewPortHeight(-1),
+_forcedProjectionMatrix(NULL),
+_forcedModelMatrix(NULL)
 {
   resizeViewport(0, 0);
   _dirtyFlags.setAllDirty();
@@ -715,6 +722,11 @@ Frustum* Camera::getFrustum() const {
 }
 
 const MutableMatrix44D& Camera::getProjectionMatrix() const {
+  
+//  if (_forcedProjectionMatrix != NULL){
+//    return *_forcedProjectionMatrix;
+//  }
+  
   if (_dirtyFlags._projectionMatrixDirty) {
     _dirtyFlags._projectionMatrixDirty = false;
     _projectionMatrix.copyValue(MutableMatrix44D::createProjectionMatrix(*getFrustumData()));
@@ -734,3 +746,16 @@ void Camera::setFixedFrustum(const double zNear,
 void Camera::resetFrustumPolicy() {
   _dirtyFlags.setAllDirty();
 }
+
+void Camera::setForcedProjectionMatrix(const MutableMatrix44D& m){
+  _timestamp++;
+  _dirtyFlags.setAllDirty();
+  _forcedProjectionMatrix = m.isValid()? new MutableMatrix44D(m) : NULL;
+}
+
+void Camera::setForcedModelMatrix(const MutableMatrix44D& m){
+  _timestamp++;
+  _dirtyFlags.setAllDirty();
+  _forcedModelMatrix = m.isValid()? new MutableMatrix44D(m) : NULL;
+}
+

@@ -93,7 +93,7 @@ double PlanetTileTessellator::skirtDepthForSector(const Planet* planet, const Se
   const double diagonalLength = nw.sub(se).length();
   const double sideLength = diagonalLength * 0.70710678118;
   //0.707 = 1 / SQRT(2) -> diagonalLength => estimated side length
-  return sideLength / 20.0;
+  return sideLength / 5.0;
 }
 
 Mesh* PlanetTileTessellator::createTileMesh(const G3MRenderContext* rc,
@@ -461,6 +461,11 @@ double PlanetTileTessellator::createSurfaceVertices(const Vector2S& meshResoluti
         const double rawElevation = elevationData->getElevationAt(position);
         
         elevation = ISNAN(rawElevation)? 0 : rawElevation * verticalExaggeration;
+        
+#warning JM: REMOVE THIS - JUST FOR TESTS
+        if (elevation < 0.0){
+          elevation = 0.0;
+        }
         
         if (elevation < minElevation) {
           minElevation = elevation;
