@@ -533,7 +533,20 @@ void PlanetTileTessellator::createSurfaceTextureCoordinates(bool mercator,
       const double v = (double) j / (meshResolution._y - 1);
       for (int i = 0; i < meshResolution._x; i++) {
         const double u = (double) i / (meshResolution._x - 1);
-        textCoords.add((float)u, (float)v);
+//        textCoords.add((float)u, (float)v);
+          
+          
+          ////
+          const Angle lat = Angle::linearInterpolation( meshSector._lower._latitude,  meshSector._upper._latitude,  1.0 - v );
+          const Angle lon = Angle::linearInterpolation( meshSector._lower._longitude, meshSector._upper._longitude,       u );
+          
+          //U
+          const double m_u = tileSector.getUCoordinate(lon);
+          
+          //V
+          const double m_v = tileSector.getVCoordinate(lat);
+          
+          textCoords.add((float)m_u, (float)m_v);
       }
     }
   }
@@ -584,7 +597,7 @@ double PlanetTileTessellator::createSurface(const Sector& tileSector,
   
   for (int i = 0; i < verticesArray.size(); i++){
     Vector2D tc = textureProjection->getUV(tileSector, *verticesArray[i]);
-    textCoords.add(tc);
+      textCoords.add(1.0 - tc._x, tc._y);
   }
   
   createSurfaceIndices(Vector2S((short)demGrid->getExtent()._x, (short)demGrid->getExtent()._y), indices);
