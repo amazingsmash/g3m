@@ -164,7 +164,10 @@ long long MapzenDEMProvider::requestTile(int z,
   IDownloader* downloader = _context->getDownloader();
   
   const IStringUtils* su = IStringUtils::instance();
-  const std::string path = "https://tile.mapzen.com/mapzen/terrain/v1/terrarium/" + su->toString(z) + "/" + su->toString(x) + "/" + su->toString(y) + ".png?api_key=" + _apiKey;
+    //Mapzen had died :(
+//  const std::string path = "https://tile.mapzen.com/mapzen/terrain/v1/terrarium/" + su->toString(z) + "/" + su->toString(x) + "/" + su->toString(y) + ".png?api_key=" + _apiKey;
+    
+    const std::string path = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/" + su->toString(z) + "/" + su->toString(x) + "/" + su->toString(y) + ".png";
   
   
   //printf("MAPZEN REQUESTED: %s\n", path.c_str());
